@@ -2,6 +2,7 @@ import json
 import os
 import hashlib
 import getpass
+import re
 
 USERS_FILE = "data/users.json"
 
@@ -22,6 +23,10 @@ def load_users():
         print("Creating new users file...")
         return {}
 
+def is_strong_password(password):
+    pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]{8,}$"
+    return bool(re.match(pattern, password))
+
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -39,6 +44,11 @@ def register_user():
         return
     
     password = getpass.getpass("Enter password: ")
+
+    if not is_strong_password(password):
+        print("Password must be at least 8 characters with uppercase, lowercase, number and special character!")
+        return None
+    
     password_hash = hash_password(password)
     
     users[username] = {
