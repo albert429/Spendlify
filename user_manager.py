@@ -1,6 +1,7 @@
 import json
 import os
 import hashlib
+import getpass
 
 USERS_FILE = "data/users.json"
 
@@ -37,7 +38,7 @@ def register_user():
         print("Username already exists!")
         return
     
-    password = input("Enter password: ")
+    password = getpass.getpass("Enter password: ")
     password_hash = hash_password(password)
     
     users[username] = {
@@ -52,7 +53,7 @@ def login_user():
     users = load_users()
     
     username = input("Username: ").strip()
-    password = input("Password: ")
+    password = getpass.getpass("Password: ")
     
     if username in users and users[username]["password_hash"] == hash_password(password):
         print("Login successful!")
