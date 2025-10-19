@@ -10,10 +10,10 @@ SESSION_FILE = "data/session.json"
 
 # Load users from the JSON file
 def load_users():
-    if not os.path.exists("data"):
-        os.makedirs("data")
-    
     try:
+        if not os.path.exists("data"):
+            os.makedirs("data")
+            
         if not os.path.exists(USERS_FILE):
             with open(USERS_FILE, "w") as f:
                 json.dump({}, f)
