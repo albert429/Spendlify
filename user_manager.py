@@ -6,6 +6,7 @@ import re
 import uuid
 
 USERS_FILE = "data/users.json"
+SESSION_FILE = "data/session.json"
 
 # Load users from the JSON file
 def load_users():
@@ -48,6 +49,24 @@ def save_users(users):
             json.dump(users, file, indent=2)
     except Exception as e:
         print(f"Error saving users: {e}")
+
+# Save current session
+def save_session(username):
+    with open(SESSION_FILE, "w") as f:
+        json.dump({"current_user": username}, f)
+
+# Load current session
+def load_session():
+    if not os.path.exists(SESSION_FILE):
+        return None
+    with open(SESSION_FILE, "r") as f:
+        data = json.load(f)
+        return data.get("current_user")
+
+# Clear current session
+def clear_session():
+    if os.path.exists(SESSION_FILE):
+        os.remove(SESSION_FILE)
 
 # User registration
 def register_user():
@@ -116,6 +135,7 @@ def login_user():
     # Verify credentials
     if username in users and users[username]["password_hash"] == hash_password(password):
         print("Login successful!")
+        save_session(username)
         return username
     else:
         print("Invalid username or password!")
@@ -125,6 +145,7 @@ def login_user():
 def logout_user(current_user):
     if current_user:
         print(f"User {current_user} logged out successfully.")
+        clear_session()
         return None
     print("No user is currently logged in.")
     return None
@@ -143,3 +164,76 @@ def delete_user(username):
         print("User account deleted successfully.")
     else:
         print("Account deletion cancelled.")
+
+# Switch user account       
+def switch_user(current_user):
+    if current_user:
+        logout_user(current_user)
+    return login_user()
+
+# Change user password
+def change_password(username):
+    users = load_users()
+    if username not in users:
+        print("User does not exist.")
+        return
+    
+    current_password = getpass.getpass("Enter current password: ")
+    if users[username]["password_hash"] != hash_password(current_password):
+        print("Current password is incorrect.")
+        return
+    
+    new_password = getpass.getpass("Enter new password: ")
+    if not is_strong_password(new_password):
+        print("Password must be at least 8 characters with uppercase, lowercase, number and special character!")
+        return
+    
+    confirm_password = getpass.getpass("Confirm new password: ")
+    if new_password != confirm_password:
+        print("Passwords do not match.")
+        return
+    
+    users[username]["password_hash"] = hash_password(new_password)
+    save_users(users)
+    print("Password changed successfully.")
+
+# Edit user profile
+def edit_user_profile(username):
+    users = load_users()
+    if username not in users:
+        print("User does not exist.")
+        return
+    
+    print("\n=== Edit Profile ===")
+    print("1. Full Name")
+    print("2. Password")
+    print("3. Preferred Currency")
+    
+    field = input("Select field to edit (1-3): ").strip()
+    
+    if field == "1":
+        full_name = input("Enter new full name (leave blank to keep current): ").strip()
+        if full_name:
+            if not re.match(r"^[A-Za-z\s]{2,50}$", full_name):
+                print("Full name must contain only letters and spaces (2–50 characters).")
+                return
+            users[username]["full_name"] = full_name
+    
+    elif field == "2":
+        change_password(username)
+        return
+    
+    elif field == "3":
+        currency = input("Enter new preferred currency (e.g., USD, EUR, EGP) (leave blank to keep current): ").strip().upper()
+        if currency:
+            if not re.match(r"^[A-Z]{3}$", currency):
+                print("Invalid currency format! Use 3-letter code (e.g., USD).")
+                return
+            users[username]["currency"] = currency
+    
+    else:
+        print("Invalid choice!")
+        return
+    
+    save_users(users)
+    print("Profile updated successfully.")
