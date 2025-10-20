@@ -4,34 +4,9 @@ import hashlib
 import getpass
 import re
 import uuid
+from data_handler import save_users, load_users
 
-USERS_FILE = "data/users.json"
 SESSION_FILE = "data/session.json"
-
-# Load users from the JSON file
-def load_users():
-    try:
-        if not os.path.exists("data"):
-            os.makedirs("data")
-            
-        if not os.path.exists(USERS_FILE):
-            with open(USERS_FILE, "w") as f:
-                json.dump({}, f)
-            return {}
-        
-        with open(USERS_FILE, "r") as file:
-            if os.path.getsize(USERS_FILE) == 0:
-                return {}
-            return json.load(file)
-    except json.JSONDecodeError:
-        print("Corrupted users file detected. Starting fresh...")
-        return {}
-    except PermissionError:
-        print("Permission denied when accessing user data.")
-        return {}
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return {}
 
 # Validate password strength
 def is_strong_password(password):
@@ -41,14 +16,6 @@ def is_strong_password(password):
 # Hash password using SHA-256
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
-
-# Save users to the JSON file
-def save_users(users):
-    try:
-        with open(USERS_FILE, "w") as file:
-            json.dump(users, file, indent=2)
-    except Exception as e:
-        print(f"Error saving users: {e}")
 
 # Save current session
 def save_session(username):
