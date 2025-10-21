@@ -267,44 +267,45 @@ def main():
 
         choice = input("\n👉 Enter your choice (1-15): ").strip()
 
-        if choice == '1':
-            add_transaction()
-        elif choice == '2':
-            view_transactions()
-        elif choice == '3':
-            edit_transaction()
-        elif choice == '4':
-            delete_transaction()
-        elif choice == '5':
-            dashboard_summary()
-        elif choice == '6':
-            monthly_reports()
-        elif choice == '7':
-            search_filter()
-        elif choice == '8':
-            savings_goals()
-        elif choice == '9':
-            budget_management()
-        elif choice == '10':
-            bill_reminders()
-        elif choice == '11':
-            import_export_data()
-        elif choice == '12':
-            settings()
-        elif choice == '13':
-            switch_user()
-        elif choice == '14':
-            show_help()
-        elif choice == '15':
-            clear_screen()
-            print("\n" + "=" * 80)
-            print("✨ Thank you for using Spendlify! ✨".center(80))
-            print("💰 Keep tracking, keep saving! 💰".center(80))
-            print("=" * 80 + "\n")
-            break
-        else:
-            print("\n❌ Invalid choice! Please enter a number between 1 and 15.")
-            input("\nPress Enter to continue...")
+        match choice:
+            case '1':
+                add_transaction()
+            case '2':
+                view_transactions()
+            case '3':
+                edit_transaction()
+            case '4':
+                delete_transaction()
+            case '5':
+                dashboard_summary()
+            case '6':
+                monthly_reports()
+            case '7':
+                search_filter()
+            case '8':
+                savings_goals()
+            case '9':
+                budget_management()
+            case '10':
+                bill_reminders()
+            case '11':
+                import_export_data()
+            case '12':
+                settings()
+            case '13':
+                switch_user()
+            case '14':
+                show_help()
+            case '15':
+                clear_screen()
+                print("\n" + "=" * 80)
+                print("✨ Thank you for using Spendlify! ✨".center(80))
+                print("💰 Keep tracking, keep saving! 💰".center(80))
+                print("=" * 80 + "\n")
+                break
+            case _:
+                print("\n❌ Invalid choice! Please enter a number between 1 and 15.")
+                input("\nPress Enter to continue...")
 
 if __name__ == "__main__":
     main()
