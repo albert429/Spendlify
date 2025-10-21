@@ -43,9 +43,9 @@ def load_users():
 def save_transactions(transactions):
     try:
         with open(TRANSACTION_FILE, "w") as file:
-            file.write("id,username,amount,currency,category,date,description\n")
+            file.write("id,username,amount,currency,category,date,description,type\n")
             for t in transactions:
-                line = f"{t['id']},{t['username']},{t['amount']},{t['currency']},{t['category']},{t['date']},{t['description']}\n"
+                line = f"{t['id']},{t['username']},{t['amount']},{t['currency']},{t['category']},{t['date']},{t['description']},{t['type']}\n"
                 file.write(line)
     except Exception as e:
         print(f"Error saving transactions: {e}")
@@ -58,14 +58,14 @@ def load_transactions():
             
         if not os.path.exists(TRANSACTION_FILE):
             with open(TRANSACTION_FILE, "w") as f:
-                f.write("id,username,amount,currency,category,date,description\n")
+                f.write("id,username,amount,currency,category,date,description,type\n")
             return []
         with open(TRANSACTION_FILE, "r") as file:
             lines = file.readlines()[1:]  # Skip header
             transactions = []
             for line in lines:
                 parts = line.strip().split(',')
-                if len(parts) == 7:
+                if len(parts) == 8:
                     transaction = {
                         "id": parts[0],
                         "username": parts[1],
@@ -73,7 +73,8 @@ def load_transactions():
                         "currency": parts[3],
                         "category": parts[4],
                         "date": parts[5],
-                        "description": parts[6]
+                        "description": parts[6],
+                        "type": parts[7]
                     }
                     transactions.append(transaction)
             return transactions
