@@ -1,5 +1,6 @@
 import os
 import json
+import csv
 import shutil
 
 USERS_FILE = "data/users.json"
@@ -8,6 +9,7 @@ BACKUP = "data/backup/"
 
 # Save users to the JSON file
 def save_users(users):
+    """Save all users to json file"""
     try:
         with open(USERS_FILE, "w") as file:
             json.dump(users, file, indent=2)
@@ -16,6 +18,7 @@ def save_users(users):
         
 # Load users from the JSON file
 def load_users():
+    """Load all users from json file"""
     try:
         if not os.path.exists("data"):
             os.makedirs("data")
@@ -41,49 +44,54 @@ def load_users():
 
 # Save transactions in csv file
 def save_transactions(transactions):
+    """Save all transactions to CSV using DictWriter"""
     try:
-        with open(TRANSACTION_FILE, "w") as file:
-            file.write("id,username,amount,currency,category,date,description,type\n")
-            for t in transactions:
-                line = f"{t['id']},{t['username']},{t['amount']},{t['currency']},{t['category']},{t['date']},{t['description']},{t['type']}\n"
-                file.write(line)
+        if not os.path.exists("data"):
+            os.makedirs("data")
+            
+        fieldnames = [
+            "id", "username", "amount", "currency",
+            "category", "date", "description", "type", "payment"
+        ]
+        with open(TRANSACTION_FILE, mode="w", newline='', encoding="utf-8") as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(transactions)
+        
     except Exception as e:
         print(f"Error saving transactions: {e}")
 
 # Load transactions from csv file
 def load_transactions():
+    """Load all transactions from CSV using DictReader"""
     try:
         if not os.path.exists("data"):
             os.makedirs("data")
             
         if not os.path.exists(TRANSACTION_FILE):
-            with open(TRANSACTION_FILE, "w") as f:
-                f.write("id,username,amount,currency,category,date,description,type\n")
+            with open(TRANSACTION_FILE, "w", newline='', encoding="utf-8") as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    "id", "username", "amount", "currency",
+                    "category", "date", "description", "type", "payment"
+                ])
             return []
-        with open(TRANSACTION_FILE, "r") as file:
-            lines = file.readlines()[1:]  # Skip header
-            transactions = []
-            for line in lines:
-                parts = line.strip().split(',')
-                if len(parts) == 8:
-                    transaction = {
-                        "id": parts[0],
-                        "username": parts[1],
-                        "amount": float(parts[2]),
-                        "currency": parts[3],
-                        "category": parts[4],
-                        "date": parts[5],
-                        "description": parts[6],
-                        "type": parts[7]
-                    }
-                    transactions.append(transaction)
-            return transactions
+        
+        transactions = []
+        with open(TRANSACTION_FILE, mode="r", newline='', encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                row.setdefault("payment", "cash")
+                row["amount"] = float(row["amount"]) if row["amount"] else 0.0
+                transactions.append(row)
+        return transactions
     except Exception as e:
         print(f"Error loading transactions: {e}")
         return []
 
 # Auto saving and backup the users and transactions
 def auto_save(users, transactions):
+    """Automatically save users and transactions, then create a backup"""
     try:
         save_users(users)
         save_transactions(transactions)
@@ -94,6 +102,7 @@ def auto_save(users, transactions):
 
 # Backup users and transactions files
 def backup():
+    """Create backup copies of the users and transactions data files"""
     try:
         if not os.path.exists(BACKUP):
             os.makedirs(BACKUP)
