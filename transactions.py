@@ -1,10 +1,72 @@
 import uuid
+import datetime
 from data_handler import load_transactions, save_transactions
 
-def add_transaction(username, amount, currency, category, date, description, type):
+def add_transaction(username):
     """ Add a new transaction for a specific user """
     try:
         transactions = load_transactions()
+        
+        while True:
+            amount_input = input("Enter transaction amount: ")
+            try:
+                amount = float(amount_input)
+                if amount <= 0:
+                    print("Amount must be greater than 0")
+                    continue
+                break
+            except ValueError:
+                print("Invalid amount. Please enter a numeric value")
+
+        # Validate currency
+        valid_currencies = ["USD", "EUR", "EGP", "GBP", "JPY"]
+        while True:
+            currency = input("Enter transaction currency (e.g., USD, EGP): ").upper()
+            if currency in valid_currencies:
+                break
+            else:
+                print(f"Invalid currency. Choose from: {', '.join(valid_currencies)}")
+
+        # Validate category
+        valid_categories = ["Food", "Transport", "Bills", "Shopping", "Other"]
+        while True:
+            category = input("Enter transaction category: ").capitalize()
+            if category:
+                if category not in valid_categories:
+                    print(f"Note: '{category}' is not a known category. Using 'Other'")
+                    category = "Other"
+                break
+            else:
+                print("Category cannot be empty")
+
+        # Validate date
+        while True:
+            date_str = input("Enter transaction date (YYYY-MM-DD): ")
+            try:
+                datetime.strptime(date_str, "%Y-%m-%d")
+                date = date_str
+                break
+            except ValueError:
+                print("Invalid date format. Please use YYYY-MM-DD.")
+
+        # Validate description
+        while True:
+            description = input("Enter transaction description: ").strip()
+            if len(description) > 100:
+                print("Description too long (max 100 characters).")
+            elif not description:
+                print("Description cannot be empty.")
+            else:
+                break
+
+        # Validate type
+        while True:
+            t_type = input("Enter transaction type (income/expense): ").lower()
+            if t_type in ["income", "expense"]:
+                break
+            else:
+                print("Invalid type. Must be 'income' or 'expense'.")
+        
         transaction = {
           "id": str(uuid.uuid4()),
           "username": username,
@@ -13,7 +75,7 @@ def add_transaction(username, amount, currency, category, date, description, typ
           "category": category,
           "date": date,
           "description": description,
-          "type": type
+          "type": t_type
         }
         transactions.append(transaction)
         save_transactions(transactions)
