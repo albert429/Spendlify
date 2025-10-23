@@ -65,17 +65,25 @@ def add_transaction(username):
             if t_type in ["income", "expense"]:
                 break
             else:
-                print("Invalid type. Must be 'income' or 'expense'.")
+                print("Invalid type. Must be 'income' or 'expense'")
+                
+        while True:
+            payment = input("Enter payment (cash / credit card): ")
+            if payment.lower() in ["cash", "credit card"]:
+                break
+            else:
+                print("Invalid payment method. Must be 'Cash' or 'Credit Card'")
         
         transaction = {
-          "id": str(uuid.uuid4()),
-          "username": username,
-          "amount": amount,
-          "currency": currency,
-          "category": category,
-          "date": date,
-          "description": description,
-          "type": t_type
+            "id": str(uuid.uuid4()),
+            "username": username,
+            "amount": amount,
+            "currency": currency,
+            "category": category,
+            "date": date,
+            "description": description,
+            "type": t_type,
+            "payment": payment
         }
         transactions.append(transaction)
         save_transactions(transactions)
@@ -93,11 +101,11 @@ def view_transactions(username):
         print("No transactions found for this user.")
         return
     
-    print("id | amount | currency | category | date | description | type")
+    print("id | amount | currency | category | date | description | type | Payment")
     print()
     
     for t in user_transactions:
-        print(f"{t['id']:<5} | {t['amount']:<10} | {t['currency']:<8} | {t['category']:<12} | {t['date']:<12} | {t['description']:<20} | {t['type']}")
+        print(f"{t['id']:<5} | {t['amount']:<10} | {t['currency']:<8} | {t['category']:<12} | {t['date']:<12} | {t['description']:<20} | {t['type']} | {t['payment']}")
 
 def delete_transaction(id):
     """ Delete a transaction by its unique ID """
@@ -151,7 +159,8 @@ def edit_transaction(id):
             3: "category",
             4: "date",
             5: "description",
-            6: "type"
+            6: "type",
+            7: "payment"
         }
         
         print("Select a field to edit:")
