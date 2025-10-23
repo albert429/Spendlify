@@ -170,8 +170,10 @@ def edit_transaction(id):
             target[field] = new_value
             save_transactions(transactions)
             print("Transaction updated.")
+            view_transactions(target["username"])
         else:
             print("Invalid choice.")
+            
                 
     except Exception as e:
         print(f"Error editing transaction: {e}")
