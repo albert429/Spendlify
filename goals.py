@@ -2,6 +2,7 @@ import datetime
 import uuid
 from data_handler import save_goals, load_goals
 
+# function to add goal for specific user
 def add_goal(username):
     """ Add a new goal for a specific user """
     try:
@@ -36,10 +37,9 @@ def add_goal(username):
                 print("Invalid current amount. Please enter a numeric value")
 
         while True:
-                deadline = input("Enter transaction date (YYYY-MM-DD): ")
+                deadline = input("Enter goal deadline (YYYY-MM-DD): ")
                 try:
                     datetime.strptime(deadline, "%Y-%m-%d")
-                    date = deadline
                     break
                 except ValueError:
                     print("Invalid date format. Please use YYYY-MM-DD.")
@@ -66,7 +66,8 @@ def add_goal(username):
         
     except Exception as e:
         print(f"Error adding goal: {e}")
-        
+  
+# function to view all user goals      
 def view_goals(username):
     """ Display all goals belonging to a given user """
     try:
@@ -86,3 +87,46 @@ def view_goals(username):
     
     except Exception as e:
         print(f"Error displaying goals: {e}")
+
+# function to delete user goal by username
+def delete_goal(username):
+    """Delete a specific goal for a user using its ID (short or full)."""
+    try:
+        goals = load_goals()
+        user_goals = [g for g in goals if g["username"] == username]
+        
+        if not user_goals:
+            print("No goals found to delete.")
+            return
+
+        print("\nYour Goals:")
+        for g in user_goals:
+            print(f"{g['id'][:5]} | {g['title']} | Target: {g['target_amount']} | Current: {g['current_amount']} | Status: {g['status']}")
+
+        goal_id = input("\nEnter the goal ID to delete: ").strip()
+        
+        target = None
+        
+        for g in user_goals:
+            # Short ID
+            if g["id"].startswith(goal_id):
+                target = g
+                break
+        
+        if not target:
+            print("Goal not found.")
+            return
+        
+        des = input(f"Are you sure you want to delete this goal: {target['title']}? (y/n): ").lower()
+        
+        if des == 'y':
+            goals.remove(target)
+            save_goals(goals)
+            print("Goal deleted successfully.")
+        elif des == 'n':
+            print("Skipping deleting goal...")
+        else:
+            print("Invalid choice.")
+    
+    except Exception as e:
+        print(f"Error deleting goal: {e}")
