@@ -43,13 +43,12 @@ def add_goal(username):
                     break
                 except ValueError:
                     print("Invalid date format. Please use YYYY-MM-DD.")
-        while True:
-                status = input("Enter goal type (active/completed): ").lower()
-                if status in ["active", "completed"]:
-                    break
-                else:
-                    print("Invalid type. Must be 'active' or 'completed'")
-
+        
+        if current_amount >= target_amount:
+            status = "completed"
+        else:
+            status = "active"
+            
         goal = {
         "id": str(uuid.uuid4()),
         "username": username,
