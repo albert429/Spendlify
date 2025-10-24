@@ -144,8 +144,7 @@ def edit_goal(username):
         print("\nYour Goals:")
         for g in user_goals:
             progress = min((g["current_amount"] / g["target_amount"]) * 100, 100)
-            print(f"{g['id'][:5]} | {g['title']} | Target: {g['target_amount']} | "
-                  f"Current: {g['current_amount']} | Progress: {progress:.1f}% | Status: {g['status']}")
+            print(f"{g['id'][:5]} | {g['title']} | Target: {g['target_amount']} | Current: {g['current_amount']} | Progress: {progress:.1f}% | Status: {g['status']}")
 
         goal_id = input("\nEnter the goal ID to edit: ").strip()
 
