@@ -6,6 +6,7 @@ import shutil
 USERS_FILE = "data/users.json"
 TRANSACTION_FILE = 'data/transactions.csv'
 BACKUP = "data/backup/"
+GOALS_FILE = "data/goals.json"
 
 # Save users to the JSON file
 def save_users(users):
@@ -126,3 +127,38 @@ def backup():
     except Exception as e:
         print(f"Error during backup: {e}")
         return False
+    
+# Save goals to the JSON file
+def save_goals(goals):
+    """Save all goals to json file"""
+    try:
+        with open(GOALS_FILE, "w") as file:
+            json.dump(goals, file, indent=2)
+    except Exception as e:
+        print(f"Error saving goals: {e}")
+        
+# Load goals from the JSON file
+def load_goals():
+    """Load all goals from json file"""
+    try:
+        if not os.path.exists("data"):
+            os.makedirs("data")
+            
+        if not os.path.exists(GOALS_FILE):
+            with open(GOALS_FILE, "w") as f:
+                json.dump([], f)
+            return []
+        
+        with open(GOALS_FILE, "r") as file:
+            if os.path.getsize(GOALS_FILE) == 0:
+                return []
+            return json.load(file)
+    except json.JSONDecodeError:
+        print("Corrupted users file detected. Starting fresh...")
+        return []
+    except PermissionError:
+        print("Permission denied when accessing goal data.")
+        return []
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return []
