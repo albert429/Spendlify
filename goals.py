@@ -3,7 +3,7 @@ import uuid
 from data_handler import save_goals, load_goals
 
 def add_goal(username):
-    """ Add a new goa; for a specific user """
+    """ Add a new goal for a specific user """
     try:
         goals = load_goals()
         while True:
@@ -14,7 +14,7 @@ def add_goal(username):
                 print("Title cannot be empty.")
 
         while True:
-            t_amount = float(input("Enter target amount: "))
+            t_amount = input("Enter target amount: ")
             try:
                 target_amount = float(t_amount)
                 if target_amount <= 0:
@@ -25,7 +25,7 @@ def add_goal(username):
                 print("Invalid target amount. Please enter a numeric value")
 
         while True:
-            c_amount = float(input("Enter current savings: "))
+            c_amount = input("Enter current savings: ")
             try:
                 current_amount = float(c_amount)
                 if current_amount < 0:
@@ -66,3 +66,23 @@ def add_goal(username):
         
     except Exception as e:
         print(f"Error adding goal: {e}")
+        
+def view_goals(username):
+    """ Display all goals belonging to a given user """
+    try:
+        goals = load_goals()   
+        user_goals = [g for g in goals if g["username"] == username]
+
+        if len(user_goals) == 0:
+            print(f"No goals found for this user {username}")
+            return
+        else:
+            print("ID | Title | Target | Current | Progress | Deadline | Status")
+            print()
+
+            for goal in user_goals:
+                progress = min((goal["current_amount"] / goal["target_amount"]) * 100, 100)
+                print(f"{goal['id'][:5]:<6} | {goal['title']:<15} | {goal['target_amount']:<10.2f} | {goal['current_amount']:<10.2f} | {progress:>6.1f}% | {goal['deadline']:<12} | {goal['status']}")
+    
+    except Exception as e:
+        print(f"Error displaying goals: {e}")
