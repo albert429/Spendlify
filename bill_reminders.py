@@ -1,5 +1,6 @@
 import datetime
 import uuid
+from datetime import date
 from data_handler import load_reminders, save_reminders
 
 # Function to add new reminder
@@ -109,3 +110,31 @@ def delete_reminder(username):
     
     except Exception as e:
         print(f"Error deleting reminder: {e}")
+
+# Function to check reminders due automatically
+def check_due_reminders(username):
+    """Remind the user with the bills due date"""
+    try:
+        reminders = load_reminders()
+        user_reminders = [r for r in reminders if r["username"] == username]
+        
+        if not user_reminders:
+            print("No reminders found.")
+            return
+
+        today = date.today()
+        
+        for reminder in user_reminders:
+            duedate = datetime.datetime.strptime(reminder["deadline"], "%Y-%m-%d").date()
+            days_left = (duedate - today).days
+            if days_left <= 5 and days_left > 1:
+                print(f"{reminder['title']} due in {days_left}.")
+            
+            elif days_left == 0:
+                print(f"{reminder['title']} due today.")
+            
+            elif days_left < 0:
+                print(f"Overdue by {abs(days_left)}")
+        
+    except Exception as e:
+        print(f"Error getting reminders: {e}")
