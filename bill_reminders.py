@@ -138,3 +138,61 @@ def check_due_reminders(username):
         
     except Exception as e:
         print(f"Error getting reminders: {e}")
+
+# Function to edit user reminders
+def edit_reminder(username):
+    """Edit an existing reminder for the specified user"""
+    try:
+        reminders = load_reminders()
+        user_reminders = [r for r in reminders if r["username"] == username]
+
+        if not user_reminders:
+            print("No reminders found to edit")
+            return
+
+        print("\nYour Reminders:")
+        view_reminders(username)
+        
+        reminder_id = input("\nEnter the reminder ID to edit: ").strip()
+
+        target_reminder = None
+        for r in user_reminders:
+            if r["id"].startswith(reminder_id):
+                target_reminder = r
+                break
+
+        if not target_reminder:
+            print("reminder not found.")
+            return
+
+        print("\nLeave a field empty to keep the current value\n")
+
+        new_title = input(f"New title ({target_reminder['title']}): ").strip()
+        if new_title:
+            target_reminder["title"] = new_title
+
+        new_amount = input(f"New amount ({target_reminder['amount']}): ").strip()
+        if new_amount:
+            try:
+                val = float(new_amount)
+                if val > 0:
+                    target_reminder["amount"] = val
+                else:
+                    print("Amount must be greater than 0. Keeping old value")
+            except ValueError:
+                print("Invalid number. Keeping old value")
+
+
+        new_deadline = input(f"New deadline ({target_reminder['deadline']}) (YYYY-MM-DD): ").strip()
+        if new_deadline:
+            try:
+                datetime.strptime(new_deadline, "%Y-%m-%d")
+                target_reminder["deadline"] = new_deadline
+            except ValueError:
+                print("Invalid date format. Keeping old value")
+
+        save_reminders(reminders)
+        print("reminder updated successfully")
+
+    except Exception as e:
+        print(f"Error editing reminder: {e}")
