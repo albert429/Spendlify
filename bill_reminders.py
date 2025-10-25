@@ -26,7 +26,7 @@ def add_reminder(username):
                 print("Invalid amount. Please enter a numeric value")
                 
         while True:
-                deadline = input("Enter goal deadline (YYYY-MM-DD): ")
+                deadline = input("Enter reminder deadline (YYYY-MM-DD): ")
                 try:
                     datetime.strptime(deadline, "%Y-%m-%d")
                     break
@@ -67,3 +67,45 @@ def view_reminders(username):
     
     except Exception as e:
         print(f"Error displaying reminders: {e}")
+        
+# function to delete reminder by username
+def delete_reminder(username):
+    """Delete a specific reminder for a user using its ID (short or full)."""
+    try:
+        reminders = load_reminders()
+        user_reminders = [r for r in reminders if r["username"] == username]
+        
+        if not user_reminders:
+            print("No reminders found to delete.")
+            return
+
+        print("\nYour Reminders:")
+        view_reminders(username)
+
+        reminder_id = input("\nEnter the reminder ID to delete: ").strip()
+        
+        target = None
+        
+        for r in user_reminders:
+            # Short ID
+            if r["id"].startswith(reminder_id):
+                target = r
+                break
+        
+        if not target:
+            print("Reminder not found.")
+            return
+        
+        des = input(f"Are you sure you want to delete this reminder: {target['title']}? (y/n): ").lower()
+        
+        if des == 'y':
+            reminders.remove(target)
+            save_reminders(reminders)
+            print("Reminder deleted successfully.")
+        elif des == 'n':
+            print("Skipping deleting reminder...")
+        else:
+            print("Invalid choice.")
+    
+    except Exception as e:
+        print(f"Error deleting reminder: {e}")
