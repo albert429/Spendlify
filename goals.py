@@ -99,9 +99,8 @@ def delete_goal(username):
             return
 
         print("\nYour Goals:")
-        for g in user_goals:
-            print(f"{g['id'][:5]} | {g['title']} | Target: {g['target_amount']} | Current: {g['current_amount']} | Status: {g['status']}")
-
+        view_goals(username)
+        
         goal_id = input("\nEnter the goal ID to delete: ").strip()
         
         target = None
@@ -142,9 +141,7 @@ def edit_goal(username):
             return
 
         print("\nYour Goals:")
-        for g in user_goals:
-            progress = min((g["current_amount"] / g["target_amount"]) * 100, 100)
-            print(f"{g['id'][:5]} | {g['title']} | Target: {g['target_amount']} | Current: {g['current_amount']} | Progress: {progress:.1f}% | Status: {g['status']}")
+        view_goals(username)
 
         goal_id = input("\nEnter the goal ID to edit: ").strip()
 

@@ -136,53 +136,76 @@ def delete_transaction(id):
     except Exception as e:
         print(f"Error deleting transaction: {e}")
 
-def edit_transaction(id):
-    """ Edit a specific field of a transaction by its ID """
-    try: 
-        target = None
+def edit_transaction(username):
+    """Edit an existing transaction for the specified user."""
+    try:
         transactions = load_transactions()
-        for t in transactions:
-            if t["id"] == id:
-                target = t
+        user_transactions = [t for t in transactions if t["username"] == username]
+
+        if not user_transactions:
+            print("No transactions found to edit.")
+            return
+
+        print("\nYour Transactions:")
+        view_transactions(username)
+
+        transaction_id = input("\nEnter the transaction ID to edit: ").strip()
+
+        target_transaction = None
+        for t in user_transactions:
+            if t["id"].startswith(transaction_id):
+                target_transaction = t
                 break
-            
-        if not target:
+
+        if not target_transaction:
             print("Transaction not found.")
             return
 
-        view_transactions(target["username"])
-        print()
+        print("\nLeave a field empty to keep the current value.\n")
 
-        fields = {
-            1: "amount",
-            2: "currency",
-            3: "category",
-            4: "date",
-            5: "description",
-            6: "type",
-            7: "payment"
-        }
-        
-        print("Select a field to edit:")
-        for key, value in fields.items():
-            print(f"{key}. {value}")
-        
-        try:
-            choice = int(input("Value: "))
-        except ValueError:
-            print("Invalid input. Please enter a number.")
-            return
-        field = fields.get(choice)
+        new_amount = input(f"New amount ({target_transaction['amount']}): ").strip()
+        if new_amount:
+            try:
+                val = float(new_amount)
+                if val > 0:
+                    target_transaction["amount"] = val
+                else:
+                    print("Amount must be greater than 0. Keeping old value.")
+            except ValueError:
+                print("Invalid amount. Keeping old value.")
 
-        if field:
-            new_value = input(f"Enter new {field} value: ")
-            target[field] = new_value
-            save_transactions(transactions)
-            print("Transaction updated.")
-            view_transactions(target["username"])
-        else:
-            print("Invalid choice.")
-            
-                
+        new_currency = input(f"New currency ({target_transaction['currency']}): ").strip()
+        if new_currency:
+            target_transaction["currency"] = new_currency
+
+        new_category = input(f"New category ({target_transaction['category']}): ").strip()
+        if new_category:
+            target_transaction["category"] = new_category
+
+        new_date = input(f"New date ({target_transaction['date']}) (YYYY-MM-DD): ").strip()
+        if new_date:
+            try:
+                datetime.strptime(new_date, "%Y-%m-%d")
+                target_transaction["date"] = new_date
+            except ValueError:
+                print("Invalid date format. Keeping old value.")
+
+        new_description = input(f"New description ({target_transaction['description']}): ").strip()
+        if new_description:
+            target_transaction["description"] = new_description
+
+        new_type = input(f"New type ({target_transaction['type']}) [income/expense]: ").strip().lower()
+        if new_type in ["income", "expense"]:
+            target_transaction["type"] = new_type
+        elif new_type:
+            print("Invalid type. Keeping old value.")
+
+        new_payment = input(f"New payment method ({target_transaction['payment']}): ").strip()
+        if new_payment:
+            target_transaction["payment"] = new_payment
+
+        save_transactions(transactions)
+        print("Transaction updated successfully!")
+
     except Exception as e:
         print(f"Error editing transaction: {e}")
