@@ -39,7 +39,7 @@ def add_goal(username):
         while True:
                 deadline = input("Enter goal deadline (YYYY-MM-DD): ")
                 try:
-                    datetime.strptime(deadline, "%Y-%m-%d")
+                    datetime.datetime.strptime(deadline, "%Y-%m-%d")
                     break
                 except ValueError:
                     print("Invalid date format. Please use YYYY-MM-DD.")
@@ -190,7 +190,7 @@ def edit_goal(username):
         new_deadline = input(f"New deadline ({target_goal['deadline']}) (YYYY-MM-DD): ").strip()
         if new_deadline:
             try:
-                datetime.strptime(new_deadline, "%Y-%m-%d")
+                datetime.datetime.strptime(new_deadline, "%Y-%m-%d")
                 target_goal["deadline"] = new_deadline
             except ValueError:
                 print("Invalid date format. Keeping old value")

@@ -30,7 +30,7 @@ def add_transaction(username):
         # Validate category
         valid_categories = ["Food", "Transport", "Bills", "Shopping", "Other"]
         while True:
-            category = input("Enter transaction category: ").capitalize()
+            category = input("Enter transaction category [Food, Transport, Bills, Shopping, Other]: ").capitalize()
             if category:
                 if category not in valid_categories:
                     print(f"Note: '{category}' is not a known category. Using 'Other'")
@@ -43,7 +43,7 @@ def add_transaction(username):
         while True:
             date_str = input("Enter transaction date (YYYY-MM-DD): ")
             try:
-                datetime.strptime(date_str, "%Y-%m-%d")
+                datetime.datetime.strptime(date_str, "%Y-%m-%d")
                 date = date_str
                 break
             except ValueError:
@@ -107,14 +107,20 @@ def view_transactions(username):
     for t in user_transactions:
         print(f"{t['id']:<5} | {t['amount']:<10} | {t['currency']:<8} | {t['category']:<12} | {t['date']:<12} | {t['description']:<20} | {t['type']} | {t['payment']}")
 
-def delete_transaction(id):
+def delete_transaction(username):
     """ Delete a transaction by its unique ID """
     try:
         transactions = load_transactions()
-        target = None
+        user_transactions = [t for t in transactions if t["username"] == username]
+
+        if not user_transactions:
+            print("No transactions found for this user.")
+            return
         
-        for t in transactions:
-            if t["id"] == id:
+        target = None
+        id = input("Enter transaction id: ")
+        for t in user_transactions:
+            if t["id"].startswith(id):
                 target = t
                 break
         
@@ -185,7 +191,7 @@ def edit_transaction(username):
         new_date = input(f"New date ({target_transaction['date']}) (YYYY-MM-DD): ").strip()
         if new_date:
             try:
-                datetime.strptime(new_date, "%Y-%m-%d")
+                datetime.datetime.strptime(new_date, "%Y-%m-%d")
                 target_transaction["date"] = new_date
             except ValueError:
                 print("Invalid date format. Keeping old value.")

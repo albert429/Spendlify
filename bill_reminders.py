@@ -1,4 +1,5 @@
 from datetime import datetime, date
+import datetime
 import uuid
 from data_handler import load_reminders, save_reminders
 
@@ -28,7 +29,7 @@ def add_reminder(username):
         while True:
                 deadline = input("Enter reminder deadline (YYYY-MM-DD): ")
                 try:
-                    datetime.strptime(deadline, "%Y-%m-%d")
+                    datetime.datetime.strptime(deadline, "%Y-%m-%d")
                     break
                 except ValueError:
                     print("Invalid date format. Please use YYYY-MM-DD.")
@@ -190,7 +191,7 @@ def edit_reminder(username):
         new_deadline = input(f"New deadline ({target_reminder['deadline']}) (YYYY-MM-DD): ").strip()
         if new_deadline:
             try:
-                datetime.strptime(new_deadline, "%Y-%m-%d")
+                datetime.datetime.strptime(new_deadline, "%Y-%m-%d")
                 target_reminder["deadline"] = new_deadline
             except ValueError:
                 print("Invalid date format. Keeping old value")
