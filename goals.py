@@ -65,7 +65,7 @@ def add_goal(username):
         
     except Exception as e:
         print(f"Error adding goal: {e}")
-  
+
 # function to view all user goals      
 def view_goals(username):
     """ Display all goals belonging to a given user """

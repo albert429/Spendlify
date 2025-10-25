@@ -1,6 +1,7 @@
 import os
 import datetime
-from decimal import Decimal
+from auth import *
+import transactions as tx
 
 def clear_screen():
     """Clear the console screen for better UI"""
@@ -13,8 +14,7 @@ def display_header():
 ███████╗██████╔╝█████╗  ██╔██╗ ██║██║  ██║██║     ██║█████╗   ╚████╔╝ 
 ╚════██║██╔═══╝ ██╔══╝  ██║╚██╗██║██║  ██║██║     ██║██╔══╝    ╚██╔╝  
 ███████║██║     ███████╗██║ ╚████║██████╔╝███████╗██║██║        ██║   
-╚══════╝╚═╝     ╚══════╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝╚═╝        ╚═╝   
-    """)
+╚══════╝╚═╝     ╚══════╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝╚═╝        ╚═╝   """)
     print("=" * 80)
     print("💰 Personal Finance Manager".center(80))
     print("=" * 80)
@@ -30,13 +30,9 @@ def display_main_menu():
     print("6.  📅 Monthly Reports")
     print("7.  🔍 Search & Filter Transactions")
     print("8.  🎯 Savings Goals")
-    print("9.  💼 Budget Management")
-    print("10. 🔔 Bill Reminders")
-    print("11. 📂 Import/Export Data")
-    print("12. ⚙️  Settings")
-    print("13. 👤 Switch User")
-    print("14. ❓ Help")
-    print("15. 🚪 Exit")
+    print("9. 👤 Switch User")
+    print("10. ❓ Help")
+    print("11. 🚪 Exit")
     print("\n" + "=" * 80)
 
 def display_user_info(current_user):
@@ -46,192 +42,41 @@ def display_user_info(current_user):
 
 # ==================== USER MANAGEMENT ====================
 
-def user_login():
-    """Handle user login with PIN/password protection"""
-    clear_screen()
-    display_header()
-    print("\n🔐 USER LOGIN\n")
-    print("This feature is under development...")
-    # TO DO: Implement login functionality
-    input("\nPress Enter to continue...")
-    return {"user_id": "USER001", "name": "Demo User", "currency": "USD"}
+def user_login_menu():
+    while True:
+        clear_screen()
+        display_header()
+        print("🔐 USER LOGIN")
+        print("1. Login")
+        print("2. Register New User")
+        print("=" * 80)
+        choice = input("\n👉 Enter your choice (1-2): ").strip()
+        if choice == '1':
+            username = login_user()
+        elif choice == '2':
+            username = register_user()
+        else:
+            print("\n❌ Invalid choice! Please enter 1 or 2.")
+            input("\nPress Enter to continue...")
+            continue
 
-def user_registration():
-    """Handle new user registration"""
-    clear_screen()
-    display_header()
-    print("\n📝 NEW USER REGISTRATION\n")
-    print("This feature is under development...")
-    # TO DO: Implement registration functionality
-    input("\nPress Enter to continue...")
+        # If login/register failed, loop again
+        if not username:
+            input("\nPress Enter to continue...")
+            continue
 
-def switch_user():
-    """Switch between different user profiles"""
-    clear_screen()
-    display_header()
-    print("\n👥 SWITCH USER\n")
-    print("This feature is under development...")
-    # TO DO: Implement user switching
-    input("\nPress Enter to return to main menu...")
+        # Build the current_user dict expected by display_user_info()
+        users = load_users()
+        user_record = users.get(username)
+        if user_record:
+            return {
+                "username": username,
+                "name": user_record.get("full_name", username),
+                "currency": user_record.get("currency", "USD")
+            }
+        return {"username": username, "name": username, "currency": "USD"}
 
-# ==================== TRANSACTION MANAGEMENT ====================
-
-def add_transaction():
-    """Add a new income or expense transaction"""
-    clear_screen()
-    display_header()
-    print("\n💳 ADD TRANSACTION\n")
-    print("1. Add Income")
-    print("2. Add Expense")
-    print("3. Back to Main Menu")
-    # TODO: Implement transaction adding with validation
-    print("\nThis feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-def view_transactions():
-    """Display all transactions with formatting"""
-    clear_screen()
-    display_header()
-    print("\n📊 VIEW ALL TRANSACTIONS\n")
-    # TODO: Implement transaction viewing with table format
-    print("This feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-def edit_transaction():
-    """Edit an existing transaction"""
-    clear_screen()
-    display_header()
-    print("\n✏️  EDIT TRANSACTION\n")
-    # TODO: Implement transaction editing
-    print("This feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-def delete_transaction():
-    """Delete a transaction with confirmation"""
-    clear_screen()
-    display_header()
-    print("\n🗑️  DELETE TRANSACTION\n")
-    # TODO: Implement transaction deletion with confirmation
-    print("This feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-# ==================== REPORTS & ANALYTICS ====================
-
-def dashboard_summary():
-    """Display financial dashboard with key metrics"""
-    clear_screen()
-    display_header()
-    print("\n📈 FINANCIAL DASHBOARD\n")
-    # TODO: Show total income, expenses, balance, recent transactions
-    print("This feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-def monthly_reports():
-    """Generate monthly financial reports"""
-    clear_screen()
-    display_header()
-    print("\n📅 MONTHLY REPORTS\n")
-    print("1. Current Month")
-    print("2. Previous Month")
-    print("3. Custom Date Range")
-    print("4. Category Breakdown")
-    print("5. Back to Main Menu")
-    # TODO: Implement monthly report generation
-    print("\nThis feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-# ==================== SEARCH & FILTER ====================
-
-def search_filter():
-    """Search and filter transactions"""
-    clear_screen()
-    display_header()
-    print("\n🔍 SEARCH & FILTER TRANSACTIONS\n")
-    print("1. Search by Date Range")
-    print("2. Filter by Category")
-    print("3. Filter by Amount Range")
-    print("4. Filter by Type (Income/Expense)")
-    print("5. Back to Main Menu")
-    # TODO: Implement search and filter functionality
-    print("\nThis feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-# ==================== ADVANCED FEATURES ====================
-
-def savings_goals():
-    """Manage savings goals with progress tracking"""
-    clear_screen()
-    display_header()
-    print("\n🎯 SAVINGS GOALS\n")
-    print("1. View All Goals")
-    print("2. Add New Goal")
-    print("3. Update Goal Progress")
-    print("4. Delete Goal")
-    print("5. Back to Main Menu")
-    # TODO: Implement savings goals feature
-    print("\nThis feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-def budget_management():
-    """Manage monthly budgets by category"""
-    clear_screen()
-    display_header()
-    print("\n💼 BUDGET MANAGEMENT\n")
-    print("1. View Current Budget")
-    print("2. Set Category Budgets")
-    print("3. Budget vs Actual Report")
-    print("4. Budget Alerts")
-    print("5. Back to Main Menu")
-    # TODO: Implement budget management feature
-    print("\nThis feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-def bill_reminders():
-    """Manage recurring bill reminders"""
-    clear_screen()
-    display_header()
-    print("\n🔔 BILL REMINDERS\n")
-    print("1. View All Reminders")
-    print("2. Add New Reminder")
-    print("3. Mark as Paid")
-    print("4. Delete Reminder")
-    print("5. Back to Main Menu")
-    # TODO: Implement bill reminders feature
-    print("\nThis feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-def import_export_data():
-    """Import/Export transaction data"""
-    clear_screen()
-    display_header()
-    print("\n📂 IMPORT/EXPORT DATA\n")
-    print("1. Export to CSV")
-    print("2. Export to JSON")
-    print("3. Import from CSV")
-    print("4. Backup All Data")
-    print("5. Back to Main Menu")
-    # TODO: Implement import/export functionality
-    print("\nThis feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-# ==================== SETTINGS & HELP ====================
-
-def settings():
-    """Application settings and preferences"""
-    clear_screen()
-    display_header()
-    print("\n⚙️  SETTINGS\n")
-    print("1. Change Password")
-    print("2. Change Currency")
-    print("3. Manage Categories")
-    print("4. Manage Payment Methods")
-    print("5. Data Management")
-    print("6. Back to Main Menu")
-    # TODO: Implement settings functionality
-    print("\nThis feature is under development...")
-    input("\nPress Enter to return to main menu...")
-
-def show_help():
+def help_menu():
     """Display help and user guide"""
     clear_screen()
     display_header()
@@ -252,16 +97,52 @@ def show_help():
     print("\n" + "=" * 80)
     input("\nPress Enter to return to main menu...")
 
+def dashboard_summary(current_user):
+    clear_screen()
+    print("\n📈 DASHBOARD SUMMARY\n")
+    pref_cur = current_user.get('currency', 'USD')
+    summary = tx.get_user_summary(current_user['username'])
+    totals = summary.get(pref_cur, {'income': 0.0, 'expense': 0.0, 'net': 0.0})
+    income = totals['income']
+    expense = totals['expense']
+    net = totals['net']
+    top_cats = tx.get_top_categories(current_user['username'], currency=pref_cur, top_n=3)
+    cur_symbols = {'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'EGP': 'E£'}
+    sym = cur_symbols.get(pref_cur, '')
+    box_w = 62
+    def hline():
+        print('.' + '-' * (box_w - 2) + '.')
+    hline()
+    title = f"Dashboard Summary"
+    print('|' + title.center(box_w - 2) + '|')
+    hline()
+    print('| ' + f"User: {current_user['name']}".ljust(box_w - 3) + '|')
+    print('| ' + f"Period: {datetime.datetime.now().strftime('%B %Y')}".ljust(box_w - 3) + '|')
+    hline()
+    # Totals
+    print('| ' + 'Total Income:'.ljust(30) + f"{sym}{income:,.2f}".rjust(box_w - 34) + ' |')
+    print('| ' + 'Total Expenses:'.ljust(30) + f"{sym}{expense:,.2f}".rjust(box_w - 34) + ' |')
+    print('| ' + 'Net Savings:'.ljust(30) + f"{sym}{net:,.2f}".rjust(box_w - 34) + ' |')
+    print('|' + ' ' * (box_w - 2) + '|')
+    # Current Balance (we use net as balance since there is no stored starting balance)
+    print('| ' + 'Current Balance:'.ljust(30) + f"{sym}{net:,.2f}".rjust(box_w - 34) + ' |')
+    hline()
+    print('\nTop Spending Categories:')
+    if not top_cats:
+        print('No expense categories found for this currency.')
+    else:
+        for i, (cat, amt, pct) in enumerate(top_cats, start=1):
+            print(f"{i}. {cat.ljust(12)} {sym}{amt:,.2f}    ({pct:.1f}%)")
+    print('\n' + '=' * 80)
+    input("\nPress Enter to return to main menu...")
 # ==================== MAIN PROGRAM ====================
 
 def main():
-    """Main program loop"""
     # Login or register
-    current_user = user_login()
+    current_user = user_login_menu()
 
     while True:
         clear_screen()
-        display_header()
         display_user_info(current_user)
         display_main_menu()
 
@@ -269,34 +150,36 @@ def main():
 
         match choice:
             case '1':
-                add_transaction()
+                tx.add_transaction(current_user['username'])
+                input("\nPress Enter to return to main menu...")
             case '2':
-                view_transactions()
+                tx.view_transactions(current_user['username'])
+                input("\nPress Enter to return to main menu...")
             case '3':
-                edit_transaction()
+                tid = input("Enter transaction id to edit: ").strip()
+                if tid:
+                    tx.edit_transaction(tid)
+                input("\nPress Enter to return to main menu...")
             case '4':
-                delete_transaction()
+                tid = input("Enter transaction id to delete: ").strip()
+                if tid:
+                    tx.delete_transaction(tid)
+                input("\nPress Enter to return to main menu...")
             case '5':
-                dashboard_summary()
+                dashboard_summary(current_user)
             case '6':
                 monthly_reports()
             case '7':
-                search_filter()
+                help_menu()
+                #search_filter()
             case '8':
-                savings_goals()
+                help_menu()
+                #savings_goals()
             case '9':
-                budget_management()
+                current_user = user_login_menu()
             case '10':
-                bill_reminders()
+                help_menu()
             case '11':
-                import_export_data()
-            case '12':
-                settings()
-            case '13':
-                switch_user()
-            case '14':
-                show_help()
-            case '15':
                 clear_screen()
                 print("\n" + "=" * 80)
                 print("✨ Thank you for using Spendlify! ✨".center(80))

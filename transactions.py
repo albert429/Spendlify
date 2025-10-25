@@ -91,7 +91,7 @@ def add_transaction(username):
     
     except Exception as e:
         print(f"Error adding transaction: {e}")
-    
+
 def view_transactions(username):
     """ Display all transactions belonging to a given user """
     transactions = load_transactions()
@@ -215,3 +215,93 @@ def edit_transaction(username):
 
     except Exception as e:
         print(f"Error editing transaction: {e}")
+
+def get_user_summary(username):
+    """Compute total income, total expenses and net per currency for a user.
+
+    Returns a dict keyed by currency with {'income': float, 'expense': float, 'net': float}
+    """
+    try:
+        transactions = load_transactions()
+        user_transactions = [t for t in transactions if t.get('username') == username]
+
+        summary = {}
+        for t in user_transactions:
+            cur = t.get('currency', 'USD')
+            try:
+                amt = float(t.get('amount', 0.0))
+            except (TypeError, ValueError):
+                amt = 0.0
+            typ = t.get('type', '').lower()
+            if cur not in summary:
+                summary[cur] = {'income': 0.0, 'expense': 0.0, 'net': 0.0}
+
+            if typ == 'income':
+                summary[cur]['income'] += amt
+                summary[cur]['net'] += amt
+            else:
+                summary[cur]['expense'] += amt
+                summary[cur]['net'] -= amt
+
+        return summary
+    except Exception as e:
+        print(f"Error computing user summary: {e}")
+        return {}
+
+def get_top_categories(username, currency=None, top_n=3):
+    """Return top N spending categories for a user in the given currency.
+
+    Returns a list of tuples: (category, amount, percent_of_total_expense)
+    """
+    try:
+        transactions = load_transactions()
+        user_transactions = [t for t in transactions if t.get('username') == username]
+
+        # Filter expenses and by currency if provided
+        expenses = [t for t in user_transactions if t.get('type', '').lower() == 'expense' and (currency is None or t.get('currency') == currency)]
+
+        totals = {}
+        total_expense = 0.0
+        for t in expenses:
+            cat = t.get('category', 'Other')
+            try:
+                amt = float(t.get('amount', 0.0))
+            except (TypeError, ValueError):
+                amt = 0.0
+            totals[cat] = totals.get(cat, 0.0) + amt
+            total_expense += amt
+
+        # Create sorted list
+        sorted_cats = sorted(totals.items(), key=lambda x: x[1], reverse=True)
+
+        result = []
+        for cat, amt in sorted_cats[:top_n]:
+            pct = (amt / total_expense * 100) if total_expense > 0 else 0.0
+            result.append((cat, amt, pct))
+
+        return result
+    except Exception as e:
+        print(f"Error computing top categories: {e}")
+        return []
+
+def category_breakdown(username, currency=None):
+    try:
+        transactions = load_transactions()
+        user_transactions = [t for t in transactions if t.get('username') == username]
+
+        # Filter expenses and by currency if provided
+        expenses = [t for t in user_transactions if t.get('type', '').lower() == 'expense' and (currency is None or t.get('currency') == currency)]
+
+        breakdown = {}
+        for t in expenses:
+            cat = t.get('category', 'Other')
+            try:
+                amt = float(t.get('amount', 0.0))
+            except (TypeError, ValueError):
+                amt = 0.0
+            breakdown[cat] = breakdown.get(cat, 0.0) + amt
+
+        return breakdown
+    except Exception as e:
+        print(f"Error computing category breakdown: {e}")
+        return {}

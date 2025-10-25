@@ -117,12 +117,6 @@ def logout_user(current_user):
     print("No user is currently logged in.")
     return None
 
-# Switch user account       
-def switch_user(current_user):
-    if current_user:
-        logout_user(current_user)
-    return login_user()
-
 # Change user password
 def change_password(username):
     users = load_users()
