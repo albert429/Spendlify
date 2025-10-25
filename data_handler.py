@@ -7,11 +7,15 @@ USERS_FILE = "data/users.json"
 TRANSACTION_FILE = 'data/transactions.csv'
 BACKUP = "data/backup/"
 GOALS_FILE = "data/goals.json"
+REMINDERS_FILE = "data/reminders.json"
 
 # Save users to the JSON file
 def save_users(users):
     """Save all users to json file"""
     try:
+        if not os.path.exists("data"):
+            os.makedirs("data")
+        
         with open(USERS_FILE, "w") as file:
             json.dump(users, file, indent=2)
     except Exception as e:
@@ -91,11 +95,13 @@ def load_transactions():
         return []
 
 # Auto saving and backup the users and transactions
-def auto_save(users, transactions):
+def auto_save(users, transactions, goals, reminders):
     """Automatically save users and transactions, then create a backup"""
     try:
         save_users(users)
         save_transactions(transactions)
+        save_goals(goals)
+        save_reminders(reminders)
         backup()
         print("Auto-save and backup completed successfully")
     except Exception as e:
@@ -128,10 +134,51 @@ def backup():
         print(f"Error during backup: {e}")
         return False
     
+# Save reminders to the JSON file
+def save_reminders(reminders):
+    """Save all reminders to json file"""
+    try:
+        if not os.path.exists("data"):
+            os.makedirs("data")
+        
+        with open(REMINDERS_FILE, "w") as file:
+            json.dump(reminders, file, indent=2)
+    except Exception as e:
+        print(f"Error saving reminders: {e}")
+        
+# Load reminders from the JSON file
+def load_reminders():
+    """Load all reminders from json file"""
+    try:
+        if not os.path.exists("data"):
+            os.makedirs("data")
+            
+        if not os.path.exists(REMINDERS_FILE):
+            with open(REMINDERS_FILE, "w") as f:
+                json.dump([], f)
+            return []
+        
+        with open(REMINDERS_FILE, "r") as file:
+            if os.path.getsize(REMINDERS_FILE) == 0:
+                return []
+            return json.load(file)
+    except json.JSONDecodeError:
+        print("Corrupted reminders file detected. Starting fresh...")
+        return []
+    except PermissionError:
+        print("Permission denied when accessing reminders data.")
+        return []
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return []
+    
 # Save goals to the JSON file
 def save_goals(goals):
     """Save all goals to json file"""
     try:
+        if not os.path.exists("data"):
+            os.makedirs("data")
+            
         with open(GOALS_FILE, "w") as file:
             json.dump(goals, file, indent=2)
     except Exception as e:
@@ -154,7 +201,7 @@ def load_goals():
                 return []
             return json.load(file)
     except json.JSONDecodeError:
-        print("Corrupted users file detected. Starting fresh...")
+        print("Corrupted goals file detected. Starting fresh...")
         return []
     except PermissionError:
         print("Permission denied when accessing goal data.")
