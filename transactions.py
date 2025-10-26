@@ -101,11 +101,11 @@ def view_transactions(username):
         print("No transactions found for this user.")
         return
     
-    print("id | amount | currency | category | date | description | type | Payment")
+    print(f"{'ID':<36} | {'Amount':<10} | {'Currency':<7} | {'Category':<12} | {'Date':<12} | {'Description':<20} | {'Type':<7} | {'Payment':<10}")
     print()
     
     for t in user_transactions:
-        print(f"{t['id']:<5} | {t['amount']:<10} | {t['currency']:<8} | {t['category']:<12} | {t['date']:<12} | {t['description']:<20} | {t['type']} | {t['payment']}")
+        print(f"{t['id']:<5} | {t['amount']:<10} | {t['currency']:<8} | {t['category']:<12} | {t['date']:<12} | {t['description']:<20} | {t['type']:<7} | {t['payment']}")
 
 def delete_transaction(username):
     """ Delete a transaction by its unique ID """
