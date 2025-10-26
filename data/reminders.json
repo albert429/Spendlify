@@ -1,0 +1,16 @@
+[
+  {
+    "id": "f8713e60-ec77-4499-a57b-5232460b50e3",
+    "username": "albert429",
+    "title": "Electricity Bill",
+    "amount": 700.0,
+    "deadline": "2025-10-30"
+  },
+  {
+    "id": "140dff2d-cd69-4b6b-b734-1b9ab87c65fc",
+    "username": "Hisham123",
+    "title": "Car installment",
+    "amount": 5005.0,
+    "deadline": "2025-10-26"
+  }
+]

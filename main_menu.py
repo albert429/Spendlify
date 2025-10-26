@@ -4,6 +4,8 @@ from auth import *
 import transactions as tx
 from search import run_search
 from data_handler import load_transactions
+from goals import *
+from bill_reminders import *
 
 def clear_screen():
     """Clear the console screen for better UI"""
@@ -79,23 +81,23 @@ def display_header():
 def display_main_menu():
     """Display the main menu options"""
     print("\n📋 MAIN MENU\n")
-    print("1.  💳 Add Transaction (Income/Expense)")
-    print("2.  📊 View All Transactions")
-    print("3.  ✏️  Edit Transaction")
-    print("4.  🗑️  Delete Transaction")
-    print("5.  📈 Dashboard Summary")
-    print("6.  📅 Monthly Reports")
-    print("7.  🔍 Search & Filter Transactions")
-    print("8.  🎯 Savings Goals")
-    print("9. 👤 Switch User")
-    print("10. ❓ Help")
-    print("11. 🚪 Exit")
+    print("1. 💳 Add/View/edit/delete Transactions (Income/Expense)")
+    print("2. 📈 Dashboard Summary")
+    print("3. 📅 Monthly Reports")
+    print("4. 🔍 Search & Filter Transactions")
+    print("5. 🎯 Savings Goals")
+    print("6. 🔔 Bill Reminder")
+    print("7. 👤 Switch User")
+    print("8. ❓ Help")
+    print("9. 🚪 Exit")
     print("\n" + "=" * 80)
 
 def display_user_info(current_user):
     """Display current user information"""
-    print(f"\n👤 Current User: {current_user['name']} | Currency: {current_user['currency']}")
+    print(f"👤 Current User: {current_user['name']} | Currency: {current_user['currency']}")
     print(f"📅 Today's Date: {datetime.datetime.now().strftime('%B %d, %Y')}")
+    check_due_reminders(current_user['username'])
+
 
 # ==================== USER MANAGEMENT ====================
 
@@ -258,32 +260,80 @@ def main():
 
         match choice:
             case '1':
-                tx.add_transaction(current_user['username'])
-                input("\nPress Enter to return to main menu...")
+                while True:
+                    print ("💳 Transactions:\n1.add\n2.View\n3.edit\n4.delete\n")
+                    choice2 = input("\n👉 Enter your choice (1-4): ").strip()
+                    match choice2:
+                        case '1':
+                            tx.add_transaction(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '2':
+                            tx.view_transactions(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '3':
+                            tx.edit_transaction(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '4':
+                            tx.delete_transaction(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
             case '2':
-                tx.view_transactions(current_user['username'])
-                input("\nPress Enter to return to main menu...")
-            case '3':
-                tx.edit_transaction(current_user['username'])
-                input("\nPress Enter to return to main menu...")
-            case '4':
-                tx.delete_transaction(current_user['username'])
-                input("\nPress Enter to return to main menu...")
-            case '5':
                 dashboard_summary(current_user)
-            case '6':
+            case '3':
                 monthly_reports(current_user)
-            case '7':
+            case '4':
                 run_search(current_user['username'])
                 input("\nPress Enter to return to main menu...")
-            case '8':
-                pass
-                #savings_goals()
-            case '9':
+            case '5':
+                while True:
+                    print ("🎯Goals:\n1.add\n2.View\n3.edit\n4.delete\n")
+                    choice2 = input("\n👉 Enter your choice (1-4): ").strip()
+                    match choice2:
+                        case '1':
+                            add_goal(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '2':
+                            view_goals(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '3':
+                            edit_goal(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '4':
+                            delete_goal(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+            case '6':
+                while True:
+                    print ("🔔 Bill Reminder:\n1.add\n2.View\n3.edit\n4.delete\n")
+                    choice2 = input("\n👉 Enter your choice (1-4): ").strip()
+                    match choice2:
+                        case '1':
+                            add_reminder(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '2':
+                            view_reminders(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '3':
+                            edit_reminder(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '4':
+                            delete_reminder(current_user['username'])
+                            input("\nPress Enter to return to main menu...")
+                            break
+            case '7':
                 current_user = user_login_menu()
-            case '10':
+            case '8':
                 help_menu()
-            case '11':
+            case '9':
                 clear_screen()
                 print("\n" + "=" * 80)
                 print("✨ Thank you for using Spendlify! ✨".center(80))

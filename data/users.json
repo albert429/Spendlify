@@ -12,5 +12,11 @@
     "full_name": "albert alfred",
     "password_hash": "7e98d21f0565bccd68423661aa460171f5a92f12e6da8f8d26dcac370e8f4093",
     "currency": "USD"
+  },
+  "Hisham123": {
+    "user_id": "776f2445-ed64-48f3-8b0f-13a3cefc2074",
+    "full_name": "Hisham",
+    "password_hash": "5f40ed0674f9a8e14620a52a2f49d22104bbf02b60c36e7325815a29277646c2",
+    "currency": "USD"
   }
 }

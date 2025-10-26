@@ -53,7 +53,7 @@ def get_user_reminders(username, reminders):
     """Return list of reminders for a user or [] if none exist."""
     user_reminders = [r for r in reminders if r["username"] == username]
     if not user_reminders:
-        print("No reminders found.")
+        print("🔔 No reminders found.")
         return []
     return user_reminders
 
@@ -119,7 +119,6 @@ def delete_reminder(username):
 
 # Function to check reminders due automatically
 def check_due_reminders(username):
-    """Remind the user with the bills due date"""
     try:
         reminders = load_reminders()
         user_reminders = get_user_reminders(username, reminders)
@@ -133,16 +132,16 @@ def check_due_reminders(username):
             duedate = datetime.datetime.strptime(reminder["deadline"], "%Y-%m-%d").date()
             days_left = (duedate - today).days
             if days_left <= 5 and days_left > 1:
-                print(f"{reminder['title']} due in {days_left} days.")
+                print(f"🔔 {reminder['title']} due in {days_left} days.")
             
             elif days_left == 0:
-                print(f"{reminder['title']} due today.")
+                print(f"🔔 {reminder['title']} due today.")
             
             elif days_left < 0:
-                print(f"Overdue by {abs(days_left)} days")
+                print(f"🔔 Overdue by {abs(days_left)} days")
         
     except Exception as e:
-        print(f"Error getting reminders: {e}")
+        print(f"🔔 Error getting reminders: {e}")
 
 # Function to edit user reminders
 def edit_reminder(username):
