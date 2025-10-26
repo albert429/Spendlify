@@ -2,8 +2,8 @@ import os
 import datetime
 from auth import *
 import transactions as tx
-from search import run_search
-from data_handler import load_transactions
+# from search import run_search
+from data_handler import load_transactions, import_transactions, export_transactions
 from goals import *
 from bill_reminders import *
 
@@ -81,7 +81,7 @@ def display_header():
 def display_main_menu():
     """Display the main menu options"""
     print("\n📋 MAIN MENU\n")
-    print("1. 💳 Add/View/edit/delete Transactions (Income/Expense)")
+    print("1. 💳 Add - View - Edit - Delete - Import - Export Transactions (Income/Expense)")
     print("2. 📈 Dashboard Summary")
     print("3. 📅 Monthly Reports")
     print("4. 🔍 Search & Filter Transactions")
@@ -261,7 +261,7 @@ def main():
         match choice:
             case '1':
                 while True:
-                    print ("💳 Transactions:\n1.add\n2.View\n3.edit\n4.delete\n")
+                    print ("💳 Transactions:\n1.Add\n2.View\n3.Edit\n4.Delete\n5.Import\n6.Export\n")
                     choice2 = input("\n👉 Enter your choice (1-4): ").strip()
                     match choice2:
                         case '1':
@@ -280,16 +280,27 @@ def main():
                             tx.delete_transaction(current_user['username'])
                             input("\nPress Enter to return to main menu...")
                             break
+                        case '5':
+                            path = input("Enter path to CSV file to import: ")
+                            import_transactions(current_user['username'], path)
+                            input("\nPress Enter to return to main menu...")
+                            break
+                        case '6':
+                            path = input("Enter path to save exported CSV (or leave empty for default): ")
+                            export_transactions(current_user['username'], path if path else None)
+                            input("\nPress Enter to return to main menu...")
+                            break
             case '2':
                 dashboard_summary(current_user)
             case '3':
                 monthly_reports(current_user)
             case '4':
-                run_search(current_user['username'])
+                pass
+                # run_search(current_user['username'])
                 input("\nPress Enter to return to main menu...")
             case '5':
                 while True:
-                    print ("🎯Goals:\n1.add\n2.View\n3.edit\n4.delete\n")
+                    print ("🎯Goals:\n1.add\n2.View\n3.Edit\n4.Delete\n")
                     choice2 = input("\n👉 Enter your choice (1-4): ").strip()
                     match choice2:
                         case '1':
@@ -310,7 +321,7 @@ def main():
                             break
             case '6':
                 while True:
-                    print ("🔔 Bill Reminder:\n1.add\n2.View\n3.edit\n4.delete\n")
+                    print ("🔔 Bill Reminder:\n1.add\n2.View\n3.Edit\n4.Delete\n")
                     choice2 = input("\n👉 Enter your choice (1-4): ").strip()
                     match choice2:
                         case '1':

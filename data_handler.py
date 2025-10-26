@@ -223,3 +223,51 @@ def load_goals():
     except Exception as e:
         print(f"Unexpected error: {e}")
         return []
+
+def import_transactions(username, import_path):
+    """Import user's transactions from a CSV file."""
+    try:
+        if not os.path.exists(import_path):
+            print(f"File not found: {import_path}")
+            return
+        
+        transactions = load_transactions()
+        with open(import_path, mode="r", newline='', encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                row["username"] = username
+                row["amount"] = float(row.get("amount", 0))
+                transactions.append(row)
+
+        save_transactions(transactions)
+        print(f"Transactions imported successfully for {username}.")
+    except Exception as e:
+        print(f"Error importing user transactions: {e}")
+
+
+def export_transactions(username, output_path=None):
+    """Export only the given user's transactions to a CSV file."""
+    try:
+        transactions = load_transactions()
+        user_tx = [t for t in transactions if t["username"] == username]
+        if not user_tx:
+            print(f"No transactions found for user {username}.")
+            return
+        
+        if not output_path:
+            if not os.path.exists("exports"):
+                os.makedirs("exports")
+            output_path = f"exports/{username}_transactions.csv"
+
+        with open(output_path, "w", newline='', encoding="utf-8") as file:
+            fieldnames = [
+                "id", "username", "amount", "currency",
+                "category", "date", "description", "type", "payment"
+            ]
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(user_tx)
+
+        print(f"Transactions for {username} exported to {output_path}")
+    except Exception as e:
+        print(f"Error exporting user transactions: {e}")
