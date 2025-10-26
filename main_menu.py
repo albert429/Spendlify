@@ -2,10 +2,67 @@ import os
 import datetime
 from auth import *
 import transactions as tx
+from search import run_search
+from data_handler import load_transactions
 
 def clear_screen():
     """Clear the console screen for better UI"""
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def monthly_reports(user):
+    """Generate and display monthly report for current user's transactions"""
+    # Get current month's start and end dates
+    today = datetime.datetime.now()
+    start_date = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if today.month == 12:
+        end_date = today.replace(year=today.year + 1, month=1, day=1) - datetime.timedelta(days=1)
+    else:
+        end_date = today.replace(month=today.month + 1, day=1) - datetime.timedelta(days=1)
+    
+    # Load and filter transactions
+    all_transactions = load_transactions()
+    monthly_transactions = [
+        t for t in all_transactions 
+        if t['username'] == user['username'] 
+        and start_date <= datetime.datetime.strptime(t['date'], '%Y-%m-%d') <= end_date
+    ]
+    
+    # Calculate totals
+    income = sum(float(t['amount']) for t in monthly_transactions if float(t['amount']) > 0)
+    expenses = abs(sum(float(t['amount']) for t in monthly_transactions if float(t['amount']) < 0))
+    net_balance = income - expenses
+    
+    # Group transactions by category
+    categories = {}
+    for transaction in monthly_transactions:
+        category = transaction['category']
+        amount = float(transaction['amount'])
+        if category not in categories:
+            categories[category] = {'total': 0, 'count': 0}
+        categories[category]['total'] += amount
+        categories[category]['count'] += 1
+    
+    # Display report
+    clear_screen()
+    print(f"\n{'=' * 50}")
+    print(f"Monthly Report for {user['username']} - {today.strftime('%B %Y')}")
+    print(f"{'=' * 50}")
+    
+    print(f"\nSummary:")
+    print(f"{'─' * 30}")
+    print(f"Total Income:  ${income:,.2f}")
+    print(f"Total Expenses: ${expenses:,.2f}")
+    print(f"Net Balance:    ${net_balance:,.2f}")
+    
+    print(f"\nBreakdown by Category:")
+    print(f"{'─' * 50}")
+    print(f"{'Category':<20} {'Amount':>10} {'Count':>8}")
+    print(f"{'─' * 50}")
+    for category, data in sorted(categories.items()):
+        print(f"{category:<20} ${data['total']:>9,.2f} {data['count']:>8}")
+    
+    print(f"\n{'=' * 50}")
+    input("\nPress Enter to continue...")
 
 def display_header():
     print("""
@@ -135,6 +192,57 @@ def dashboard_summary(current_user):
             print(f"{i}. {cat.ljust(12)} {sym}{amt:,.2f}    ({pct:.1f}%)")
     print('\n' + '=' * 80)
     input("\nPress Enter to return to main menu...")
+
+def monthly_reports(user):
+    today = datetime.datetime.now()
+    start_date = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if today.month == 12:
+        end_date = today.replace(year=today.year + 1, month=1, day=1) - datetime.timedelta(days=1)
+    else:
+        end_date = today.replace(month=today.month + 1, day=1) - datetime.timedelta(days=1)
+    
+    all_transactions = load_transactions()
+    monthly_transactions = [
+        t for t in all_transactions 
+        if t['username'] == user['username'] 
+        and start_date <= datetime.datetime.strptime(t['date'], '%Y-%m-%d') <= end_date
+    ]
+
+    income = sum(float(t['amount']) for t in monthly_transactions if float(t['amount']) > 0)
+    expenses = abs(sum(float(t['amount']) for t in monthly_transactions if float(t['amount']) < 0))
+    net_balance = income - expenses
+
+    categories = {}
+    for transaction in monthly_transactions:
+        category = transaction['category']
+        amount = float(transaction['amount'])
+        if category not in categories:
+            categories[category] = {'total': 0, 'count': 0}
+        categories[category]['total'] += amount
+        categories[category]['count'] += 1
+    
+    # Display report
+    clear_screen()
+    print(f"\n{'=' * 50}")
+    print(f"Monthly Report for {user['username']} - {today.strftime('%B %Y')}")
+    print(f"{'=' * 50}")
+    
+    print(f"\nSummary:")
+    print(f"{'─' * 30}")
+    print(f"Total Income:  ${income:,.2f}")
+    print(f"Total Expenses: ${expenses:,.2f}")
+    print(f"Net Balance:    ${net_balance:,.2f}")
+    
+    print(f"\nBreakdown by Category:")
+    print(f"{'─' * 50}")
+    print(f"{'Category':<20} {'Amount':>10} {'Count':>8}")
+    print(f"{'─' * 50}")
+    for category, data in sorted(categories.items()):
+        print(f"{category:<20} ${data['total']:>9,.2f} {data['count']:>8}")
+    
+    print(f"\n{'=' * 50}")
+    input("\nPress Enter to continue...")
+
 # ==================== MAIN PROGRAM ====================
 
 def main():
@@ -164,12 +272,12 @@ def main():
             case '5':
                 dashboard_summary(current_user)
             case '6':
-                monthly_reports()
+                monthly_reports(current_user)
             case '7':
-                help_menu()
-                #search_filter()
+                run_search(current_user['username'])
+                input("\nPress Enter to return to main menu...")
             case '8':
-                help_menu()
+                pass
                 #savings_goals()
             case '9':
                 current_user = user_login_menu()
