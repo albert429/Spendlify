@@ -128,6 +128,20 @@ def backup():
         else:
             print("No transactions file found to backup.")
         
+        # Backup Goals file
+        if os.path.exists(GOALS_FILE):
+            shutil.copy2(GOALS_FILE, os.path.join(BACKUP, "goals_backup.csv"))
+            print("Goals backup updated.")
+        else:
+            print("No goals file found to backup.")
+        
+        # Backup bills reminder file
+        if os.path.exists(REMINDERS_FILE):
+            shutil.copy2(REMINDERS_FILE, os.path.join(BACKUP, "reminders_backup.csv"))
+            print("Reminders backup updated.")
+        else:
+            print("No reminders file found to backup.")
+        
         return True
     
     except Exception as e:
