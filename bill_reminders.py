@@ -67,7 +67,7 @@ def view_reminders(username):
         if len(user_reminders) == 0:
             return
         else:
-            print("ID | Title | Amount | Deadline")
+            print(f"{'ID':<6} | {'Title':<15} | {'Amount':<10} | Deadline")
             print()
 
             for reminder in user_reminders:
