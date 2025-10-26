@@ -156,14 +156,10 @@ def main():
                 tx.view_transactions(current_user['username'])
                 input("\nPress Enter to return to main menu...")
             case '3':
-                tid = input("Enter transaction id to edit: ").strip()
-                if tid:
-                    tx.edit_transaction(tid)
+                tx.edit_transaction(current_user['username'])
                 input("\nPress Enter to return to main menu...")
             case '4':
-                tid = input("Enter transaction id to delete: ").strip()
-                if tid:
-                    tx.delete_transaction(tid)
+                tx.delete_transaction(current_user['username'])
                 input("\nPress Enter to return to main menu...")
             case '5':
                 dashboard_summary(current_user)

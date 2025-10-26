@@ -117,6 +117,9 @@ def delete_transaction(username):
             print("No transactions found for this user.")
             return
         
+        view_transactions(username)
+        print()
+        
         target = None
         id = input("Enter transaction id: ")
         for t in user_transactions:
