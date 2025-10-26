@@ -1,19 +1,36 @@
 import os
 import requests
+import datetime
 from dotenv import load_dotenv
-
-# Load the .env file from the current directory
+from transactions import load_transactions
 load_dotenv()
 
-# Get API key from .env file
 API_KEY = os.getenv("GEMINI_API_KEY")
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 
-def ask_gemini(question):
+def ask_gemini(question, current_user):
     headers = {
         "Content-Type": "application/json",
         "X-goog-api-key": API_KEY
     }
+
+    # Load user's transactions
+    all_transactions = load_transactions()
+    user_transactions = [tx for tx in all_transactions if tx['username'] == current_user['username']]
+
+    # Create context with user info and transactions
+    current_date = datetime.datetime.now().strftime("%B %d, %Y")
+    context = f"""Current date: {current_date}
+    User: {current_user['username']}
+    Recent transactions:
+    """
+    # Add last 5 transactions to context
+    for tx in user_transactions[-5:]:
+        context += f"- {tx['date']}: {tx['amount']} {tx['currency']} for {tx['category']}\n"
+
+    # Combine context with user's question
+    full_prompt = f"""{context}
+    User's question: {question}"""
 
     # Prepare the message in Gemini's format
     data = {
@@ -21,7 +38,7 @@ def ask_gemini(question):
             {
                 "parts": [
                     {
-                        "text": question
+                        "text": full_prompt
                     }
                 ]
             }
@@ -53,10 +70,16 @@ def ask_gemini(question):
     except Exception as e:
         return f"Unexpected error: {str(e)}"
 
-def main():
+def main(current_user=None):
     print("Simple Gemini Chat")
     print("Type 'exit' to quit")
     print("-" * 30)
+
+    # Create a test user for demo purposes
+    test_user = {
+        "username": "test_user",
+        "name": "Test User"
+    }
 
     while True:
         # Get user's question
@@ -73,7 +96,7 @@ def main():
         
         # Get and print Gemini's response
         print("\nGemini's answer:")
-        print(ask_gemini(question))
+        print(ask_gemini(question, current_user))
 
 if __name__ == "__main__":
     main()

@@ -87,9 +87,10 @@ def display_main_menu():
     print("4. 🔍 Search & Filter Transactions")
     print("5. 🎯 Savings Goals")
     print("6. 🔔 Bill Reminder")
-    print("7. 👤 Switch User")
-    print("8. ❓ Help")
-    print("9. 🚪 Exit")
+    print("7. 🧠 Personal Ai Assistant")
+    print("8. 👤 Switch User")
+    print("9. ❓ Help")
+    print("10.🚪 Exit\n")
     print("\n" + "=" * 80)
 
 def display_user_info(current_user):
@@ -341,10 +342,13 @@ def main():
                             input("\nPress Enter to return to main menu...")
                             break
             case '7':
-                current_user = user_login_menu()
+                from simple_gemini import main as gemini_main
+                gemini_main(current_user)
             case '8':
-                help_menu()
+                current_user = user_login_menu()
             case '9':
+                help_menu()
+            case '10':
                 clear_screen()
                 print("\n" + "=" * 80)
                 print("✨ Thank you for using Spendlify! ✨".center(80))
