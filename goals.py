@@ -77,12 +77,12 @@ def view_goals(username):
             print(f"No goals found for this user {username}")
             return
         else:
-            print("ID | Title | Target | Current | Progress | Deadline | Status")
+            print(f"{'ID':<6} | {'Title':<15} | {'Target':<10} | {'Current':<10} | {'Progress':<7} | {'Deadline':<12} | Status")
             print()
 
             for goal in user_goals:
                 progress = min((goal["current_amount"] / goal["target_amount"]) * 100, 100)
-                print(f"{goal['id'][:5]:<6} | {goal['title']:<15} | {goal['target_amount']:<10.2f} | {goal['current_amount']:<10.2f} | {progress:>6.1f}% | {goal['deadline']:<12} | {goal['status']}")
+                print(f"{goal['id'][:5]:<6} | {goal['title']:<15} | {goal['target_amount']:<10.2f} | {goal['current_amount']:<10.2f} | {progress:>7.1f}% | {goal['deadline']:<12} | {goal['status']}")
     
     except Exception as e:
         print(f"Error displaying goals: {e}")
