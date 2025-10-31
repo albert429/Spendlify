@@ -2,13 +2,14 @@ import os
 import datetime
 from auth import *
 import transactions as tx
-# from search import run_search
+from search import run_search
 from data_handler import load_transactions, import_transactions, export_transactions
 from goals import *
 from bill_reminders import *
 
 def clear_screen():
     """Clear the console screen for better UI"""
+    
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def monthly_reports(user):
@@ -297,7 +298,7 @@ def main():
                 monthly_reports(current_user)
             case '4':
                 pass
-                # run_search(current_user['username'])
+                run_search(current_user['username'])
                 input("\nPress Enter to return to main menu...")
             case '5':
                 while True:
