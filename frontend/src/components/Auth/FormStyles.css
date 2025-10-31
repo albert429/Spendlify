@@ -1,0 +1,84 @@
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center all elements */
+    gap: 15px;
+    animation: fade-in 0.3s ease-out;
+}
+
+/* Common width for inputs and button */
+.form-group,
+.form-input,
+.submit-btn {
+    width: 100%;
+    max-width: 400px;
+    /* Adjust as you like (250–320px looks good) */
+}
+
+/* Glass glowing input */
+.form-input {
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s ease;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box;
+}
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-input:focus {
+    border-color: #a78bfa;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+}
+
+/* For select dropdown */
+.form-input option {
+    background: #4b0082;
+    color: #fff;
+}
+
+/* Button */
+.submit-btn {
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Animation */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

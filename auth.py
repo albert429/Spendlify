@@ -8,6 +8,17 @@ from data_handler import save_users, load_users
 
 SESSION_FILE = "data/session.json"
 
+def get_logged_in_user():
+    """Get the currently logged in user from the session file."""
+    try:
+        if os.path.exists(SESSION_FILE):
+            with open(SESSION_FILE, 'r') as f:
+                session = json.load(f)
+                return session.get('username')
+    except (json.JSONDecodeError, FileNotFoundError):
+        pass
+    return None
+
 # Validate password strength
 def is_strong_password(password):
     pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]{8,}$"
@@ -17,18 +28,22 @@ def is_strong_password(password):
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Save current session
+# Save current session (use key 'username' consistently)
 def save_session(username):
+    os.makedirs(os.path.dirname(SESSION_FILE), exist_ok=True)
     with open(SESSION_FILE, "w") as f:
-        json.dump({"current_user": username}, f)
+        json.dump({"username": username}, f)
 
-# Load current session
+# Load current session (reads the same 'username' key)
 def load_session():
     if not os.path.exists(SESSION_FILE):
         return None
-    with open(SESSION_FILE, "r") as f:
-        data = json.load(f)
-        return data.get("current_user")
+    try:
+        with open(SESSION_FILE, "r") as f:
+            data = json.load(f)
+            return data.get("username")
+    except (json.JSONDecodeError, FileNotFoundError):
+        return None
 
 # Clear current session
 def clear_session():
@@ -36,77 +51,64 @@ def clear_session():
         os.remove(SESSION_FILE)
 
 # User registration
-def register_user():
+def register_user(username, password, full_name, currency):
     users = load_users()
 
-    full_name = input("Enter full name: ").strip()
-    if not full_name:
-        print("Full name cannot be empty.")
-        return
-    if not re.match(r"^[A-Za-z\s]{2,50}$", full_name):
-        print("Full name must contain only letters and spaces (2–50 characters).")
-        return
+    # Validate input data
+    if not full_name or not re.match(r"^[A-Za-z\s]{2,50}$", full_name):
+        return {"error": "Invalid full name. Must contain only letters and spaces (2-50 characters)."}
 
-    username = input("Enter username: ").strip()
-    if not username:
-        print("Username cannot be empty.")
-        return
+    if not username or len(username) < 3:
+        return {"error": "Username must be at least 3 characters long."}
+
     if username in users:
-        print("Username already exists!")
-        return
-    if len(username) < 3:
-        print("Username must be at least 3 characters long.")
-        return
-    
-    currency = input("Enter preferred currency (e.g., USD, EUR, EGP): ").strip().upper()
-    if not re.match(r"^[A-Z]{3}$", currency):
-        print("Invalid currency format! Use 3-letter code (e.g., USD).")
-        return
-    
-    password = getpass.getpass("Enter password: ")
+        return {"error": "Username already exists!"}
+
+    if not currency or not re.match(r"^[A-Z]{3}$", currency):
+        return {"error": "Invalid currency format! Use 3-letter code (e.g., USD)."}
+
     if not is_strong_password(password):
-        print("Password must be at least 8 characters with uppercase, lowercase, number and special character!")
-        return None
-    
-    confirm_password = getpass.getpass("Confirm password: ")
-    if password != confirm_password:
-        print("Passwords do not match.")
-        return
-    
+        return {"error": "Password must be at least 8 characters with uppercase, lowercase, number and special character!"}
+
     password_hash = hash_password(password)
     
     # Store user data
-    users[username] = {
+    user_data = {
         "user_id": str(uuid.uuid4()),
         "full_name": full_name,
         "password_hash": password_hash,
         "currency": currency,
     }
-    
+    users[username] = user_data
     save_users(users)
-    print("Registration successful!")
-    return username
+
+    # Return user data without password hash
+    return {
+        "username": username,
+        "user_id": user_data["user_id"],
+        "full_name": user_data["full_name"],
+        "currency": user_data["currency"]
+    }
 
 # User login
-def login_user():
+def login_user(username, password):
     users = load_users()
     
-    # Check the username is not empty
-    username = input("Username: ").strip()
-    if not username:
-        print("Username cannot be empty.")
-        return
-    
-    password = getpass.getpass("Password: ")
-    
-    # Verify credentials
+    # Check credentials
+    if not username or not password:
+        return None
+
     if username in users and users[username]["password_hash"] == hash_password(password):
-        print("Login successful!")
+        user_data = users[username]
         save_session(username)
-        return username
-    else:
-        print("Invalid username or password!")
-        return
+        # Return user data without password hash
+        return {
+            "username": username,
+            "user_id": user_data["user_id"],
+            "full_name": user_data["full_name"],
+            "currency": user_data["currency"]
+        }
+    return None
 
 # User logout    
 def logout_user(current_user):
