@@ -75,6 +75,9 @@ Welcome to **Spendlify** – your intelligent financial companion that transform
 - 🔐 Secure data transfer process
 
 #### 🤖 AI Assistant
+<div align="center">
+![Spendlify Banner](assets/Gemini_Generated_Image_3fj1q93fj1q93fj1.png)
+</div>
 - 💬 Chat naturally about your finances
 - 📊 Get instant spending insights
 - 💡 Receive personalized recommendations
