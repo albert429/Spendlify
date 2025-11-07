@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spendlify - Dashboard</title>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/transactions.css">
+    <link rel="stylesheet" href="/static/css/goals.css">
+    <link rel="stylesheet" href="/static/css/reminders.css">
+    <link rel="stylesheet" href="/static/css/ai-assistant.css">
+</head>
+
+<body>
+    {% include 'components/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        {% include 'components/topbar.html' %}
+
+        <!-- Upcoming Bills Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>📅 Upcoming Bills</h3>
+                <button class="btn btn-primary" onclick="showSection('reminders')">Manage Bills</button>
+            </div>
+            <div id="dashboard-reminders" class="reminders-container">
+                <!-- Horizontal cards will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Sections -->
+        {% include 'components/dashboard-section.html' %}
+        {% include 'components/transactions-section.html' %}
+        {% include 'components/goals-section.html' %}
+        {% include 'components/reminders-section.html' %}
+        {% include 'components/ai-assistant-section.html' %}
+    </div>
+
+    <!-- Modals -->
+    {% include 'components/transaction-modal.html' %}
+    {% include 'components/goal-modal.html' %}
+    {% include 'components/reminder-modal.html' %}
+
+    <!-- JavaScript Files -->
+    <script src="/static/js/core.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/transactions.js"></script>
+    <script src="/static/js/goals.js"></script>
+    <script src="/static/js/reminders.js"></script>
+    <script src="/static/js/ai-assistant.js"></script>
+    <script src="/static/components/modals.js"></script>
+    <script src="/static/components/utils.js"></script>
+</body>
+
+</html>
