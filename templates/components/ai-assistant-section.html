@@ -1,0 +1,15 @@
+<div id="ai-assistant" class="section">
+    <div class="chat-container">
+        <div class="card">
+            <div class="card-header">
+                <h3>🤖 AI Financial Assistant</h3>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" placeholder="Ask about your finances..."
+                    onkeypress="handleChatKeypress(event)">
+                <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
