@@ -483,7 +483,7 @@ def api_ai_chat():
     return jsonify({"response": response})
 
 
-# CSV Import Route
+# CSV Import Route - FIXED
 @app.route("/api/transactions/import", methods=["POST"])
 @login_required
 def api_import_transactions():
@@ -507,49 +507,90 @@ def api_import_transactions():
 
         transactions = load_transactions()
         imported_count = 0
+        errors = []
 
-        # Expected headers
-        expected_headers = [
-            "amount",
-            "currency",
-            "category",
-            "date",
-            "description",
-            "type",
-            "payment",
-        ]
+        for row_num, row in enumerate(csv_reader, start=2):
+            try:
+                # Validate required fields
+                required_fields = [
+                    "amount",
+                    "currency",
+                    "category",
+                    "date",
+                    "description",
+                    "type",
+                    "payment",
+                ]
+                missing_fields = [
+                    field
+                    for field in required_fields
+                    if field not in row or not row[field]
+                ]
 
-        for row in csv_reader:
-            # Validate required fields
-            if not all(field in row for field in expected_headers):
+                if missing_fields:
+                    errors.append(
+                        f"Row {row_num}: Missing fields: {', '.join(missing_fields)}"
+                    )
+                    continue
+
+                # Validate amount
+                try:
+                    amount = float(row["amount"])
+                    if amount <= 0:
+                        errors.append(f"Row {row_num}: Amount must be greater than 0")
+                        continue
+                except ValueError:
+                    errors.append(f"Row {row_num}: Invalid amount value")
+                    continue
+
+                # Validate date format
+                try:
+                    datetime.strptime(row["date"], "%Y-%m-%d")
+                except ValueError:
+                    errors.append(
+                        f"Row {row_num}: Invalid date format (use YYYY-MM-DD)"
+                    )
+                    continue
+
+                # Validate type
+                if row["type"].lower() not in ["income", "expense"]:
+                    errors.append(f"Row {row_num}: Type must be 'income' or 'expense'")
+                    continue
+
+                # Create transaction
+                transaction = {
+                    "id": str(uuid.uuid4()),
+                    "username": username,
+                    "amount": amount,
+                    "currency": row["currency"].upper(),
+                    "category": row["category"],
+                    "date": row["date"],
+                    "description": row["description"],
+                    "type": row["type"].lower(),
+                    "payment": row["payment"],
+                }
+
+                transactions.append(transaction)
+                imported_count += 1
+
+            except Exception as e:
+                errors.append(f"Row {row_num}: {str(e)}")
                 continue
 
-            # Create transaction
-            transaction = {
-                "id": str(uuid.uuid4()),
-                "username": username,
-                "amount": float(row["amount"]),
-                "currency": row["currency"],
-                "category": row["category"],
-                "date": row["date"],
-                "description": row["description"],
-                "type": row["type"],
-                "payment": row["payment"],
-            }
-
-            transactions.append(transaction)
-            imported_count += 1
-
         # Save transactions
-        save_transactions(transactions)
+        if imported_count > 0:
+            save_transactions(transactions)
 
-        return jsonify(
-            {
-                "success": True,
-                "count": imported_count,
-                "message": f"Successfully imported {imported_count} transactions",
-            }
-        )
+        response_data = {
+            "success": True,
+            "count": imported_count,
+            "message": f"Successfully imported {imported_count} transactions",
+        }
+
+        if errors:
+            response_data["warnings"] = errors[:10]  # Limit to first 10 errors
+
+        return jsonify(response_data)
 
     except Exception as e:
         print(f"Import error: {e}")
@@ -559,7 +600,7 @@ def api_import_transactions():
         )
 
 
-# CSV Export Route
+# CSV Export Route - FIXED
 @app.route("/api/transactions/export", methods=["GET"])
 @login_required
 def api_export_transactions():
@@ -602,15 +643,21 @@ def api_export_transactions():
                 }
             )
 
-        # Convert to bytes
+        # Convert to bytes for download
         output.seek(0)
-
-        return send_file(
-            io.BytesIO(output.getvalue().encode("utf-8")),
+        
+        # Create response with proper headers
+        from flask import Response
+        
+        response = Response(
+            output.getvalue(),
             mimetype="text/csv",
-            as_attachment=True,
-            download_name=f'{username}_transactions_{datetime.datetime.now().strftime("%Y%m%d")}.csv',
+            headers={
+                "Content-Disposition": f"attachment; filename={username}_transactions_{datetime.now().strftime('%Y%m%d')}.csv"
+            }
         )
+        
+        return response
 
     except Exception as e:
         print(f"Export error: {e}")
