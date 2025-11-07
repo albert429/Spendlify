@@ -10,18 +10,5 @@ window.onclick = function (event) {
     }
 }
 
-// Form submission handlers (to be called from HTML)
-function handleTransactionSubmit(e) {
-    e.preventDefault();
-    // Implementation in transactions.js
-}
-
-function handleGoalSubmit(e) {
-    e.preventDefault();
-    // Implementation in goals.js
-}
-
-function handleReminderSubmit(e) {
-    e.preventDefault();
-    // Implementation in reminders.js
-}
+// Make closeModal globally available
+window.closeModal = closeModal;

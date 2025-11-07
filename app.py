@@ -2,7 +2,10 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 import os
 from functools import wraps
 from datetime import datetime
-import json
+import csv
+import io
+from flask import send_file
+import uuid
 
 # Import your existing modules
 from auth import login_user, register_user, logout_user, load_session, save_session
@@ -411,6 +414,35 @@ def api_add_reminder():
     return jsonify({"success": True, "reminder": reminder})
 
 
+@app.route("/api/reminders/<reminder_id>", methods=["PUT"])
+@login_required
+def api_edit_reminder(reminder_id):
+    username = session.get("username")
+    data = request.get_json()
+    reminders = load_reminders()
+
+    reminder = next(
+        (r for r in reminders if r["id"] == reminder_id and r["username"] == username),
+        None,
+    )
+
+    if reminder:
+        reminder.update(
+            {
+                "title": data.get("title", reminder["title"]),
+                "amount": float(data.get("amount", reminder["amount"])),
+                "deadline": data.get("deadline", reminder["deadline"]),
+            }
+        )
+
+        from data_handler import save_reminders
+
+        save_reminders(reminders)
+        return jsonify({"success": True, "reminder": reminder})
+
+    return jsonify({"success": False, "message": "Reminder not found"}), 404
+
+
 @app.route("/api/reminders/<reminder_id>", methods=["DELETE"])
 @login_required
 def api_delete_reminder(reminder_id):
@@ -449,6 +481,145 @@ def api_ai_chat():
 
     response = ask_gemini(question, current_user)
     return jsonify({"response": response})
+
+
+# CSV Import Route
+@app.route("/api/transactions/import", methods=["POST"])
+@login_required
+def api_import_transactions():
+    username = session.get("username")
+
+    if "file" not in request.files:
+        return jsonify({"success": False, "message": "No file provided"}), 400
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"success": False, "message": "No file selected"}), 400
+
+    if not file.filename.endswith(".csv"):
+        return jsonify({"success": False, "message": "File must be a CSV"}), 400
+
+    try:
+        # Read the CSV file
+        stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+        csv_reader = csv.DictReader(stream)
+
+        transactions = load_transactions()
+        imported_count = 0
+
+        # Expected headers
+        expected_headers = [
+            "amount",
+            "currency",
+            "category",
+            "date",
+            "description",
+            "type",
+            "payment",
+        ]
+
+        for row in csv_reader:
+            # Validate required fields
+            if not all(field in row for field in expected_headers):
+                continue
+
+            # Create transaction
+            transaction = {
+                "id": str(uuid.uuid4()),
+                "username": username,
+                "amount": float(row["amount"]),
+                "currency": row["currency"],
+                "category": row["category"],
+                "date": row["date"],
+                "description": row["description"],
+                "type": row["type"],
+                "payment": row["payment"],
+            }
+
+            transactions.append(transaction)
+            imported_count += 1
+
+        # Save transactions
+        save_transactions(transactions)
+
+        return jsonify(
+            {
+                "success": True,
+                "count": imported_count,
+                "message": f"Successfully imported {imported_count} transactions",
+            }
+        )
+
+    except Exception as e:
+        print(f"Import error: {e}")
+        return (
+            jsonify({"success": False, "message": f"Error importing file: {str(e)}"}),
+            500,
+        )
+
+
+# CSV Export Route
+@app.route("/api/transactions/export", methods=["GET"])
+@login_required
+def api_export_transactions():
+    username = session.get("username")
+
+    try:
+        transactions = load_transactions()
+        user_transactions = [t for t in transactions if t["username"] == username]
+
+        if not user_transactions:
+            return (
+                jsonify({"success": False, "message": "No transactions to export"}),
+                404,
+            )
+
+        # Create CSV in memory
+        output = io.StringIO()
+        fieldnames = [
+            "amount",
+            "currency",
+            "category",
+            "date",
+            "description",
+            "type",
+            "payment",
+        ]
+        writer = csv.DictWriter(output, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for tx in user_transactions:
+            writer.writerow(
+                {
+                    "amount": tx["amount"],
+                    "currency": tx["currency"],
+                    "category": tx["category"],
+                    "date": tx["date"],
+                    "description": tx["description"],
+                    "type": tx["type"],
+                    "payment": tx["payment"],
+                }
+            )
+
+        # Convert to bytes
+        output.seek(0)
+
+        return send_file(
+            io.BytesIO(output.getvalue().encode("utf-8")),
+            mimetype="text/csv",
+            as_attachment=True,
+            download_name=f'{username}_transactions_{datetime.datetime.now().strftime("%Y%m%d")}.csv',
+        )
+
+    except Exception as e:
+        print(f"Export error: {e}")
+        return (
+            jsonify(
+                {"success": False, "message": f"Error exporting transactions: {str(e)}"}
+            ),
+            500,
+        )
 
 
 if __name__ == "__main__":

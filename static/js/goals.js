@@ -1,11 +1,17 @@
-// Goals Functions
 async function loadGoals() {
     try {
         const response = await fetch('/api/goals');
+        if (!response.ok) {
+            throw new Error('Failed to load goals');
+        }
         goals = await response.json();
         renderGoals();
     } catch (error) {
         console.error('Error loading goals:', error);
+        const container = document.getElementById('goals-list');
+        if (container) {
+            container.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Error loading goals</p></div>';
+        }
     }
 }
 
@@ -17,38 +23,77 @@ function renderGoals() {
         return;
     }
 
-    if (goals.length === 0) {
+    if (!goals || goals.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>No goals yet. Start setting your financial targets!</p></div>';
         return;
     }
 
-    container.innerHTML = goals.map(goal => {
+    // Sort goals by deadline
+    const sortedGoals = [...goals].sort((a, b) => {
+        return new Date(a.deadline) - new Date(b.deadline);
+    });
+
+    container.innerHTML = sortedGoals.map(goal => {
         const progress = Math.min((goal.current_amount / goal.target_amount) * 100, 100);
-        const goalJson = JSON.stringify(goal).replace(/"/g, '&quot;');
+        const goalJson = JSON.stringify(goal).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const remaining = Math.max(0, goal.target_amount - goal.current_amount);
+
+        // Calculate days until deadline
+        const today = new Date();
+        const deadline = new Date(goal.deadline);
+        const daysLeft = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+
+        let urgentClass = '';
+        if (goal.status === 'completed') {
+            urgentClass = 'completed';
+        } else if (daysLeft < 30) {
+            urgentClass = 'urgent';
+        }
 
         return `
-            <div class="card" style="margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
-                    <div>
-                        <h4 style="margin-bottom: 5px;">${goal.title}</h4>
-                        <p style="color: #666; font-size: 0.9em;">Target: $${goal.target_amount.toFixed(2)} by ${goal.deadline}</p>
+            <div class="goal-card ${urgentClass}">
+                <div class="goal-header">
+                    <div class="goal-title-section">
+                        <div class="goal-title">${goal.title || 'Untitled Goal'}</div>
+                        <div class="goal-target">Target: $${parseFloat(goal.target_amount || 0).toFixed(2)}</div>
                     </div>
-                    <span class="badge badge-${goal.status}">${goal.status}</span>
+                    <span class="goal-status-badge ${goal.status || 'active'}">${goal.status || 'active'}</span>
                 </div>
-                <div style="margin-bottom: 10px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>Progress</span>
-                        <span><strong>$${goal.current_amount.toFixed(2)}</strong> / $${goal.target_amount.toFixed(2)}</span>
+                
+                <div class="goal-progress">
+                    <div class="progress-info">
+                        <div class="progress-labels">
+                            <span class="progress-amount">$${parseFloat(goal.current_amount || 0).toFixed(2)}</span>
+                            <span class="progress-target">of $${parseFloat(goal.target_amount || 0).toFixed(2)}</span>
+                        </div>
+                        <span class="progress-percentage">${progress.toFixed(1)}%</span>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    <div class="enhanced-progress-bar">
+                        <div class="enhanced-progress-fill" style="width: ${progress}%"></div>
                     </div>
-                    <div style="text-align: right; margin-top: 5px; color: #666; font-size: 0.9em;">
-                        ${progress.toFixed(1)}% Complete
+                    <div class="progress-milestones">
+                        <div class="milestone">0%</div>
+                        <div class="milestone">25%</div>
+                        <div class="milestone">50%</div>
+                        <div class="milestone">75%</div>
+                        <div class="milestone">100%</div>
                     </div>
                 </div>
-                <div class="action-btns">
-                    <button class="btn btn-sm btn-edit" onclick="openEditGoalModal(${goalJson})">Edit</button>
+                
+                <div style="margin: 15px 0; padding-top: 15px; border-top: 1px solid #e9ecef;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: #6c757d;">
+                        <span>📅 Deadline: ${goal.deadline}</span>
+                        ${goal.status !== 'completed' ? `<span>💰 Remaining: $${remaining.toFixed(2)}</span>` : '<span>✅ Completed!</span>'}
+                    </div>
+                    ${daysLeft > 0 && goal.status !== 'completed' ? `
+                        <div style="margin-top: 5px; font-size: 0.85em; color: ${daysLeft < 30 ? '#dc3545' : '#28a745'};">
+                            ${daysLeft} days left
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="goal-actions">
+                    <button class="btn btn-sm btn-edit" onclick='openEditGoalModal(${goalJson})'>Edit</button>
                     <button class="btn btn-sm btn-delete" onclick="deleteGoal('${goal.id}')">Delete</button>
                 </div>
             </div>
@@ -59,50 +104,62 @@ function renderGoals() {
 function openEditGoalModal(goal) {
     console.log('Opening edit modal for goal:', goal);
 
-    // Safely get elements
-    const titleElement = document.getElementById('goalModalTitle');
-    const idElement = document.getElementById('goal-id');
-    const titleInput = document.getElementById('goal-title');
-    const targetInput = document.getElementById('goal-target');
-    const currentInput = document.getElementById('goal-current');
-    const deadlineInput = document.getElementById('goal-deadline');
-    const modalElement = document.getElementById('goalModal');
+    const modal = document.getElementById('goalModal');
+    const title = document.getElementById('goalModalTitle');
 
-    // Check if all required elements exist
-    if (!titleElement || !idElement || !titleInput || !targetInput || !currentInput || !deadlineInput || !modalElement) {
-        console.error('Required goal modal elements not found');
-        alert('Error: Goal modal elements not found. Please refresh the page.');
+    if (!modal || !title) {
+        console.error('Goal modal elements not found');
+        alert('Error: Goal modal not found. Please refresh the page.');
         return;
     }
 
     // Set the values
-    titleElement.textContent = 'Edit Goal';
-    idElement.value = goal.id;
-    titleInput.value = goal.title;
-    targetInput.value = goal.target_amount;
-    currentInput.value = goal.current_amount;
-    deadlineInput.value = goal.deadline;
+    title.textContent = 'Edit Goal';
+
+    const fields = {
+        'goal-id': goal.id,
+        'goal-title': goal.title,
+        'goal-target': goal.target_amount,
+        'goal-current': goal.current_amount,
+        'goal-deadline': goal.deadline
+    };
+
+    for (const [id, value] of Object.entries(fields)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = value || '';
+        } else {
+            console.warn(`Element ${id} not found`);
+        }
+    }
 
     // Show the modal
-    modalElement.classList.add('show');
+    modal.classList.add('show');
 }
 
 function openAddGoalModal() {
-    const titleElement = document.getElementById('goalModalTitle');
-    const idElement = document.getElementById('goal-id');
-    const modalElement = document.getElementById('goalModal');
+    const modal = document.getElementById('goalModal');
+    const title = document.getElementById('goalModalTitle');
+    const form = document.getElementById('goalForm');
+    const idField = document.getElementById('goal-id');
 
-    if (titleElement && idElement) {
-        titleElement.textContent = 'Add Goal';
-        idElement.value = '';
+    if (!modal || !title || !form || !idField) {
+        console.error('Goal modal elements not found');
+        alert('Error: Modal elements not found. Please refresh the page.');
+        return;
     }
 
-    document.getElementById('goalForm').reset();
-    document.getElementById('goal-deadline').valueAsDate = new Date();
+    title.textContent = 'Add Goal';
+    idField.value = '';
+    form.reset();
 
-    if (modalElement) {
-        modalElement.classList.add('show');
-    }
+    // Set today as default deadline
+    const today = new Date();
+    today.setDate(today.getDate() + 30); // Default to 30 days from now
+    document.getElementById('goal-deadline').valueAsDate = today;
+    document.getElementById('goal-current').value = '0';
+
+    modal.classList.add('show');
 }
 
 async function handleGoalSubmit(e) {
@@ -110,11 +167,33 @@ async function handleGoalSubmit(e) {
 
     const goalId = document.getElementById('goal-id').value;
     const data = {
-        title: document.getElementById('goal-title').value,
-        target_amount: document.getElementById('goal-target').value,
-        current_amount: document.getElementById('goal-current').value,
+        title: document.getElementById('goal-title').value.trim(),
+        target_amount: parseFloat(document.getElementById('goal-target').value),
+        current_amount: parseFloat(document.getElementById('goal-current').value),
         deadline: document.getElementById('goal-deadline').value
     };
+
+    // Validation
+    if (!data.title) {
+        alert('Please enter a goal title');
+        return;
+    }
+
+    if (!data.target_amount || data.target_amount <= 0) {
+        alert('Please enter a valid target amount');
+        return;
+    }
+
+    if (data.current_amount < 0) {
+        alert('Current amount cannot be negative');
+        return;
+    }
+
+    if (data.current_amount > data.target_amount) {
+        if (!confirm('Current amount exceeds target. This goal will be marked as completed. Continue?')) {
+            return;
+        }
+    }
 
     try {
         const url = goalId ? `/api/goals/${goalId}` : '/api/goals';
@@ -128,12 +207,15 @@ async function handleGoalSubmit(e) {
 
         if (response.ok) {
             closeModal('goalModal');
-            loadGoals();
+            await loadGoals();
+            alert(goalId ? 'Goal updated successfully!' : 'Goal added successfully!');
         } else {
-            console.error('Failed to save goal:', response.status);
+            const error = await response.json();
+            alert('Error saving goal: ' + (error.message || 'Unknown error'));
         }
     } catch (error) {
         console.error('Error saving goal:', error);
+        alert('Error saving goal. Please try again.');
     }
 }
 
@@ -146,9 +228,13 @@ async function deleteGoal(id) {
         });
 
         if (response.ok) {
-            loadGoals();
+            await loadGoals();
+            alert('Goal deleted successfully!');
+        } else {
+            alert('Error deleting goal');
         }
     } catch (error) {
         console.error('Error deleting goal:', error);
+        alert('Error deleting goal. Please try again.');
     }
 }
