@@ -1,0 +1,45 @@
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h1>✨ Spendlify</h1>
+    </div>
+
+    <div class="user-info">
+        <h3>{{ full_name }}</h3>
+        <p>@{{ username }}</p>
+        <p>Currency: {{ currency }}</p>
+    </div>
+
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a class="nav-link active" onclick="showSection('dashboard')">
+                <span class="icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" onclick="showSection('transactions')">
+                <span class="icon">💳</span>
+                <span>Transactions</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" onclick="showSection('goals')">
+                <span class="icon">🎯</span>
+                <span>Goals</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" onclick="showSection('reminders')">
+                <span class="icon">🔔</span>
+                <span>Reminders</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" onclick="showSection('ai-assistant')">
+                <span class="icon">🤖</span>
+                <span>AI Assistant</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="sidebarOverlay" onclick="closeSidebar()"></div>
