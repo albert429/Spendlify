@@ -1,0 +1,93 @@
+/* Reminder Status Colors */
+.reminder-card-horizontal.overdue {
+    border-left-color: #dc3545;
+    background: linear-gradient(135deg, #fff 0%, #ffe6e6 100%);
+}
+
+.reminder-card-horizontal.overdue .reminder-card-status {
+    background: #dc3545;
+    color: white;
+}
+
+.reminder-card-horizontal.due-today {
+    border-left-color: #ff4500;
+    background: linear-gradient(135deg, #fff 0%, #ffe8e6 100%);
+    animation: pulse-urgent 2s infinite;
+}
+
+.reminder-card-horizontal.due-today .reminder-card-status {
+    background: #ff4500;
+    color: white;
+}
+
+.reminder-card-horizontal.due-soon {
+    border-left-color: #ffa500;
+    background: linear-gradient(135deg, #fff 0%, #fff3e6 100%);
+}
+
+.reminder-card-horizontal.due-soon .reminder-card-status {
+    background: #ffa500;
+    color: white;
+}
+
+.reminder-card-horizontal.due-approaching {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, #fff 0%, #fffce6 100%);
+}
+
+.reminder-card-horizontal.due-approaching .reminder-card-status {
+    background: #ffc107;
+    color: #333;
+}
+
+.reminder-card-horizontal.due-later {
+    border-left-color: #28a745;
+    background: linear-gradient(135deg, #fff 0%, #f0fff4 100%);
+}
+
+.reminder-card-horizontal.due-later .reminder-card-status {
+    background: #28a745;
+    color: white;
+}
+
+/* Empty State */
+.empty-reminders {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.empty-reminders .icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.empty-reminders p {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.empty-reminders .subtext {
+    font-size: 0.9em;
+    margin-top: 10px;
+    opacity: 0.7;
+}
+
+/* Animations */
+@keyframes pulse-urgent {
+    0% {
+        box-shadow: 0 4px 12px rgba(255, 69, 0, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 4px 20px rgba(255, 69, 0, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 4px 12px rgba(255, 69, 0, 0.1);
+    }
+}

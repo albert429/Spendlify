@@ -1,0 +1,26 @@
+<div id="reminderModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="reminderModalTitle">Add Reminder</h3>
+        </div>
+        <form id="reminderForm" onsubmit="handleReminderSubmit(event)">
+            <input type="hidden" id="reminder-id">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="reminder-title" required>
+            </div>
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="reminder-amount" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label>Deadline</label>
+                <input type="date" id="reminder-deadline" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('reminderModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
