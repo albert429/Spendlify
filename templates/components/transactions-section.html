@@ -1,0 +1,28 @@
+<div id="transactions" class="section">
+    <div class="card">
+        <div class="card-header">
+            <h3>All Transactions</h3>
+            <button class="btn btn-primary" onclick="openAddTransactionModal()">+ Add Transaction</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Payment</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-primary" onclick="importCSV(event)">Import Transactions</button>
+        <button class="btn btn-primary" onclick="exportCSV()">Export Transactions</button>
+    </div>
+</div>

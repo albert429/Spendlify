@@ -1,0 +1,245 @@
+/* Transactions Specific Styles */
+
+/* Transactions Table Enhancements */
+.transactions-table {
+    margin-top: 20px;
+}
+
+.transactions-table th {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85em;
+}
+
+.transactions-table th:first-child {
+    border-radius: 10px 0 0 0;
+}
+
+.transactions-table th:last-child {
+    border-radius: 0 10px 0 0;
+}
+
+.transactions-table td {
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+.transactions-table tr:last-child td {
+    border-bottom: none;
+}
+
+.transactions-table tr:hover {
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+    transform: translateX(2px);
+    transition: all 0.2s ease;
+}
+
+/* Amount Column Styling */
+.amount-income {
+    color: var(--success);
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.amount-expense {
+    color: var(--danger);
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+/* Category Badge Enhancements */
+.category-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.category-food {
+    background: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.category-transport {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+.category-bills {
+    background: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffe0b2;
+}
+
+.category-shopping {
+    background: #fce4ec;
+    color: #c2185b;
+    border: 1px solid #f8bbd9;
+}
+
+.category-other {
+    background: #f5f5f5;
+    color: #616161;
+    border: 1px solid #e0e0e0;
+}
+
+/* Action Buttons Enhancement */
+.transaction-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.transaction-actions .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8em;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.transaction-actions .btn-edit:hover {
+    background: #e0a800;
+    transform: translateY(-1px);
+}
+
+.transaction-actions .btn-delete:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+/* CSV Buttons Styling */
+.csv-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.csv-buttons .btn {
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.csv-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Empty State Enhancement */
+.transactions-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+    border-radius: 15px;
+    border: 2px dashed #dee2e6;
+}
+
+.transactions-empty-state .icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+    opacity: 0.5;
+    color: var(--primary);
+}
+
+.transactions-empty-state h4 {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.transactions-empty-state p {
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+/* Loading State */
+.transactions-loading {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+}
+
+.transactions-loading .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design for Transactions */
+@media (max-width: 768px) {
+    .transactions-table {
+        font-size: 0.9em;
+    }
+
+    .transactions-table th,
+    .transactions-table td {
+        padding: 8px 6px;
+    }
+
+    .transaction-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .transaction-actions .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.75em;
+    }
+
+    .csv-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .csv-buttons .btn {
+        justify-content: center;
+    }
+}
+
+/* Print Styles for Transactions */
+@media print {
+
+    .transaction-actions,
+    .csv-buttons {
+        display: none;
+    }
+
+    .transactions-table {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+
+    .transactions-table th {
+        background: #f8f9fa !important;
+        color: #333 !important;
+        border-bottom: 2px solid #dee2e6;
+    }
+}

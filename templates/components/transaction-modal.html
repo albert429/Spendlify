@@ -1,0 +1,61 @@
+<!-- Add Transaction Modal -->
+<div id="transactionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="transactionModalTitle">Add Transaction</h3>
+        </div>
+        <form id="transactionForm" onsubmit="handleTransactionSubmit(event)">
+            <input type="hidden" id="transaction-id">
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="transaction-amount" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label>Currency</label>
+                <select id="transaction-currency" required>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="JPY">JPY</option>
+                    <option value="EGP">EGP</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="transaction-category" required>
+                    <option value="Food">Food</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Bills">Bills</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="transaction-date" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" id="transaction-description" required>
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select id="transaction-type" required>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="transaction-payment" required>
+                    <option value="cash">Cash</option>
+                    <option value="credit card">Credit Card</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('transactionModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
