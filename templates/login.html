@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spendlify - Login</title>
+  <link rel="stylesheet" href="/static/css/login.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <h1>✨ Spendlify</h1>
+      <p>Your Smart Financial Companion</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="login">Login</button>
+      <button class="tab" data-tab="register">Register</button>
+    </div>
+
+    <div id="alert" class="alert"></div>
+
+    <!-- Login Form -->
+    <div id="login-form" class="form-container active">
+      <form>
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" required />
+        </div>
+        <div class="form-group password-toggle">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required />
+          <button type="button" class="toggle-btn">👁️</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form" class="form-container">
+      <form>
+        <div class="form-group">
+          <label for="register-fullname">Full Name</label>
+          <input type="text" id="register-fullname" required pattern="[A-Za-z\s]{2,50}" />
+        </div>
+        <div class="form-group">
+          <label for="register-username">Username</label>
+          <input type="text" id="register-username" required minlength="3" />
+        </div>
+        <div class="form-group">
+          <label for="register-currency">Preferred Currency</label>
+          <select id="register-currency" required>
+            <option value="USD">USD - US Dollar</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="GBP">GBP - British Pound</option>
+            <option value="JPY">JPY - Japanese Yen</option>
+            <option value="EGP">EGP - Egyptian Pound</option>
+          </select>
+        </div>
+        <div class="form-group password-toggle">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" required
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\\|,.</>\/?]).{8,}$"
+            title="Password must be at least 8 characters with uppercase, lowercase, number and special character">
+          <button type="button" class="toggle-btn">👁️</button>
+        </div>
+        <div class="form-group password-toggle">
+          <label for="register-confirm">Confirm Password</label>
+          <input type="password" id="register-confirm" required />
+          <button type="button" class="toggle-btn">👁️</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+    </div>
+
+    <div class="features">
+      <h3>Why Choose Spendlify?</h3>
+      <div class="feature-grid">
+        <div class="feature">Smart Tracking</div>
+        <div class="feature">AI Insights</div>
+        <div class="feature">Multi-Currency</div>
+        <div class="feature">Secure & Private</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/login.js"></script>
+</body>
+
+</html>
