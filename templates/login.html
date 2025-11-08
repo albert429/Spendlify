@@ -4,84 +4,165 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spendlify - Login</title>
+  <title>Spendlify - Master Your Money</title>
   <link rel="stylesheet" href="/static/css/login.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
+  <!-- Animated Background -->
+  <div class="background-animation">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="logo-hero">
+        <svg class="money-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#gradient1)" />
+          <path d="M2 17L12 22L22 17" stroke="url(#gradient2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="url(#gradient2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="gradient1" x1="2" y1="2" x2="22" y2="12">
+              <stop offset="0%" stop-color="#10b981" />
+              <stop offset="100%" stop-color="#34d399" />
+            </linearGradient>
+            <linearGradient id="gradient2" x1="2" y1="12" x2="22" y2="17">
+              <stop offset="0%" stop-color="#10b981" />
+              <stop offset="100%" stop-color="#34d399" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <h1 class="brand-name">Spendlify</h1>
+      </div>
+      <p class="tagline">Master Your Money.</p>
+      <p class="subtitle">Smart tracking. AI insights. Financial freedom.</p>
+    </div>
+  </div>
+
+  <!-- Main Container -->
   <div class="container">
-    <div class="logo">
-      <h1>✨ Spendlify</h1>
-      <p>Your Smart Financial Companion</p>
-    </div>
+    <div class="card-glass">
 
-    <div class="tabs">
-      <button class="tab active" data-tab="login">Login</button>
-      <button class="tab" data-tab="register">Register</button>
-    </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="login">
+          <span class="tab-icon">🔐</span>
+          <span>Login</span>
+        </button>
+        <button class="tab" data-tab="register">
+          <span class="tab-icon">✨</span>
+          <span>Register</span>
+        </button>
+      </div>
 
-    <div id="alert" class="alert"></div>
+      <div id="alert" class="alert"></div>
 
-    <!-- Login Form -->
-    <div id="login-form" class="form-container active">
-      <form>
-        <div class="form-group">
-          <label for="login-username">Username</label>
-          <input type="text" id="login-username" required />
-        </div>
-        <div class="form-group password-toggle">
-          <label for="login-password">Password</label>
-          <input type="password" id="login-password" required />
-          <button type="button" class="toggle-btn">👁️</button>
-        </div>
-        <button type="submit" class="btn btn-primary">Login</button>
-      </form>
-    </div>
+      <!-- Login Form -->
+      <div id="login-form" class="form-container active">
+        <form>
+          <div class="form-group">
+            <label for="login-username">
+              <span class="label-icon">👤</span>
+              Username
+            </label>
+            <input type="text" id="login-username" placeholder="Enter your username" required />
+          </div>
+          <div class="form-group password-toggle">
+            <label for="login-password">
+              <span class="label-icon">🔒</span>
+              Password
+            </label>
+            <input type="password" id="login-password" placeholder="Enter your password" required />
+            <button type="button" class="toggle-btn">👁️</button>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span class="btn-text">Login</span>
+            <span class="btn-icon">→</span>
+          </button>
+        </form>
+      </div>
 
-    <!-- Register Form -->
-    <div id="register-form" class="form-container">
-      <form>
-        <div class="form-group">
-          <label for="register-fullname">Full Name</label>
-          <input type="text" id="register-fullname" required pattern="[A-Za-z\s]{2,50}" />
-        </div>
-        <div class="form-group">
-          <label for="register-username">Username</label>
-          <input type="text" id="register-username" required minlength="3" />
-        </div>
-        <div class="form-group">
-          <label for="register-currency">Preferred Currency</label>
-          <select id="register-currency" required>
-            <option value="USD">USD - US Dollar</option>
-            <option value="EUR">EUR - Euro</option>
-            <option value="GBP">GBP - British Pound</option>
-            <option value="JPY">JPY - Japanese Yen</option>
-            <option value="EGP">EGP - Egyptian Pound</option>
-          </select>
-        </div>
-        <div class="form-group password-toggle">
-          <label for="register-password">Password</label>
-          <input type="password" id="register-password" required
-            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\\|,.</>\/?]).{8,}$"
-            title="Password must be at least 8 characters with uppercase, lowercase, number and special character">
-          <button type="button" class="toggle-btn">👁️</button>
-        </div>
-        <div class="form-group password-toggle">
-          <label for="register-confirm">Confirm Password</label>
-          <input type="password" id="register-confirm" required />
-          <button type="button" class="toggle-btn">👁️</button>
-        </div>
-        <button type="submit" class="btn btn-primary">Register</button>
-      </form>
-    </div>
+      <!-- Register Form -->
+      <div id="register-form" class="form-container">
+        <form>
+          <div class="form-group">
+            <label for="register-fullname">
+              <span class="label-icon">✨</span>
+              Full Name
+            </label>
+            <input type="text" id="register-fullname" placeholder="John Doe" required pattern="[A-Za-z\s]{2,50}" />
+          </div>
+          <div class="form-group">
+            <label for="register-username">
+              <span class="label-icon">👤</span>
+              Username
+            </label>
+            <input type="text" id="register-username" placeholder="Choose a username" required minlength="3" />
+          </div>
+          <div class="form-group">
+            <label for="register-currency">
+              <span class="label-icon">💰</span>
+              Preferred Currency
+            </label>
+            <select id="register-currency" required>
+              <option value="USD">USD - US Dollar</option>
+              <option value="EUR">EUR - Euro</option>
+              <option value="GBP">GBP - British Pound</option>
+              <option value="JPY">JPY - Japanese Yen</option>
+              <option value="EGP">EGP - Egyptian Pound</option>
+            </select>
+          </div>
+          <div class="form-group password-toggle">
+            <label for="register-password">
+              <span class="label-icon">🔒</span>
+              Password
+            </label>
+            <input type="password" id="register-password" placeholder="Create a strong password" required
+              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.</\>\/?]).{8,}$"
+              title="Password must be at least 8 characters with uppercase, lowercase, number and special character">
+            <button type="button" class="toggle-btn">👁️</button>
+          </div>
+          <div class="form-group password-toggle">
+            <label for="register-confirm">
+              <span class="label-icon">🔐</span>
+              Confirm Password
+            </label>
+            <input type="password" id="register-confirm" placeholder="Confirm your password" required />
+            <button type="button" class="toggle-btn">👁️</button>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span class="btn-text">Create Account</span>
+            <span class="btn-icon">→</span>
+          </button>
+        </form>
+      </div>
 
-    <div class="features">
-      <h3>Why Choose Spendlify?</h3>
-      <div class="feature-grid">
-        <div class="feature">Smart Tracking</div>
-        <div class="feature">AI Insights</div>
-        <div class="feature">Multi-Currency</div>
-        <div class="feature">Secure & Private</div>
+      <div class="features">
+        <h3>Why Choose Spendlify?</h3>
+        <div class="feature-grid">
+          <div class="feature">
+            <span class="feature-icon">📊</span>
+            <span>Smart Tracking</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🤖</span>
+            <span>AI Insights</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">💱</span>
+            <span>Multi-Currency</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🔐</span>
+            <span>Secure & Private</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

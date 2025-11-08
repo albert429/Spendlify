@@ -1,53 +1,55 @@
 /* Reminder Status Colors */
+/* Inherits from theme.css and base.css */
+
 .reminder-card-horizontal.overdue {
-    border-left-color: #dc3545;
-    background: linear-gradient(135deg, #fff 0%, #ffe6e6 100%);
+    border-left-color: var(--danger);
+    background: linear-gradient(135deg, var(--white) 0%, rgba(239, 68, 68, 0.05) 100%);
 }
 
 .reminder-card-horizontal.overdue .reminder-card-status {
-    background: #dc3545;
-    color: white;
+    background: var(--danger);
+    color: var(--white);
 }
 
 .reminder-card-horizontal.due-today {
     border-left-color: #ff4500;
-    background: linear-gradient(135deg, #fff 0%, #ffe8e6 100%);
+    background: linear-gradient(135deg, var(--white) 0%, rgba(255, 69, 0, 0.05) 100%);
     animation: pulse-urgent 2s infinite;
 }
 
 .reminder-card-horizontal.due-today .reminder-card-status {
     background: #ff4500;
-    color: white;
+    color: var(--white);
 }
 
 .reminder-card-horizontal.due-soon {
-    border-left-color: #ffa500;
-    background: linear-gradient(135deg, #fff 0%, #fff3e6 100%);
+    border-left-color: var(--warning);
+    background: linear-gradient(135deg, var(--white) 0%, rgba(245, 158, 11, 0.05) 100%);
 }
 
 .reminder-card-horizontal.due-soon .reminder-card-status {
-    background: #ffa500;
-    color: white;
+    background: var(--warning);
+    color: var(--white);
 }
 
 .reminder-card-horizontal.due-approaching {
     border-left-color: #ffc107;
-    background: linear-gradient(135deg, #fff 0%, #fffce6 100%);
+    background: linear-gradient(135deg, var(--white) 0%, rgba(255, 193, 7, 0.05) 100%);
 }
 
 .reminder-card-horizontal.due-approaching .reminder-card-status {
     background: #ffc107;
-    color: #333;
+    color: var(--text-dark);
 }
 
 .reminder-card-horizontal.due-later {
-    border-left-color: #28a745;
-    background: linear-gradient(135deg, #fff 0%, #f0fff4 100%);
+    border-left-color: var(--success);
+    background: linear-gradient(135deg, var(--white) 0%, rgba(16, 185, 129, 0.05) 100%);
 }
 
 .reminder-card-horizontal.due-later .reminder-card-status {
-    background: #28a745;
-    color: white;
+    background: var(--success);
+    color: var(--white);
 }
 
 /* Empty State */

@@ -1,28 +1,31 @@
 /* Goals Specific Styles */
+/* Inherits from theme.css and base.css */
 
 /* Goals Grid Layout */
 .goals-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 25px;
-    margin-top: 20px;
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
 }
 
 /* Goal Card Enhancements */
 .goal-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 15px var(--shadow-md);
     border-left: 5px solid var(--primary);
-    transition: all 0.3s ease;
+    transition: all var(--transition-base) var(--ease-smooth);
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--gray-100);
 }
 
 .goal-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 25px var(--shadow-lg);
+    border-left-color: var(--primary-light);
 }
 
 .goal-card::before {
@@ -31,8 +34,8 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    height: 5px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
 }
 
 /* Goal Header */
