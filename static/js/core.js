@@ -88,6 +88,11 @@ function showSection(section) {
 
     // Close sidebar on mobile
     closeSidebar();
+    
+    // Reinitialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 }
 
 // Toggle sidebar for mobile

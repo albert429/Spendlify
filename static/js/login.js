@@ -122,14 +122,18 @@ class LoginManager {
     togglePassword(inputId) {
         const input = document.getElementById(inputId);
         const toggleBtn = input.parentNode.querySelector('.toggle-btn');
+        const icon = toggleBtn.querySelector('i');
 
         if (input.type === 'password') {
             input.type = 'text';
-            toggleBtn.textContent = '🙈';
+            icon.setAttribute('data-lucide', 'eye-off');
         } else {
             input.type = 'password';
-            toggleBtn.textContent = '👁️';
+            icon.setAttribute('data-lucide', 'eye');
         }
+        
+        // Reinitialize Lucide icons
+        lucide.createIcons();
     }
 
     showAlert(message, type) {

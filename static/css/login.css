@@ -234,7 +234,8 @@ body {
 }
 
 .tab-icon {
-    font-size: 1.25rem;
+    width: 20px;
+    height: 20px;
 }
 
 .tab:hover {
@@ -285,7 +286,8 @@ body {
 }
 
 .label-icon {
-    font-size: 1.1rem;
+    width: 18px;
+    height: 18px;
 }
 
 .form-group input,
@@ -380,7 +382,8 @@ body {
 .btn-icon {
     position: relative;
     z-index: 1;
-    font-size: 1.25rem;
+    width: 20px;
+    height: 20px;
     transition: transform 0.3s;
 }
 
@@ -443,9 +446,16 @@ body {
     border: none;
     cursor: pointer;
     color: var(--text-light);
-    font-size: 1.25rem;
     transition: all 0.3s;
     padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle .toggle-btn i {
+    width: 20px;
+    height: 20px;
 }
 
 .password-toggle .toggle-btn:hover {
@@ -495,7 +505,8 @@ body {
 }
 
 .feature-icon {
-    font-size: 1.25rem;
+    width: 20px;
+    height: 20px;
 }
 
 /* Responsive Design */

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
@@ -52,11 +53,11 @@
 
       <div class="tabs">
         <button class="tab active" data-tab="login">
-          <span class="tab-icon">🔐</span>
+          <i data-lucide="lock" class="tab-icon"></i>
           <span>Login</span>
         </button>
         <button class="tab" data-tab="register">
-          <span class="tab-icon">✨</span>
+          <i data-lucide="sparkles" class="tab-icon"></i>
           <span>Register</span>
         </button>
       </div>
@@ -68,22 +69,22 @@
         <form>
           <div class="form-group">
             <label for="login-username">
-              <span class="label-icon">👤</span>
+              <i data-lucide="user" class="label-icon"></i>
               Username
             </label>
             <input type="text" id="login-username" placeholder="Enter your username" required />
           </div>
           <div class="form-group password-toggle">
             <label for="login-password">
-              <span class="label-icon">🔒</span>
+              <i data-lucide="lock" class="label-icon"></i>
               Password
             </label>
             <input type="password" id="login-password" placeholder="Enter your password" required />
-            <button type="button" class="toggle-btn">👁️</button>
+            <button type="button" class="toggle-btn"><i data-lucide="eye"></i></button>
           </div>
           <button type="submit" class="btn btn-primary">
             <span class="btn-text">Login</span>
-            <span class="btn-icon">→</span>
+            <i data-lucide="arrow-right" class="btn-icon"></i>
           </button>
         </form>
       </div>
@@ -93,21 +94,21 @@
         <form>
           <div class="form-group">
             <label for="register-fullname">
-              <span class="label-icon">✨</span>
+              <i data-lucide="user-circle" class="label-icon"></i>
               Full Name
             </label>
             <input type="text" id="register-fullname" placeholder="John Doe" required pattern="[A-Za-z\s]{2,50}" />
           </div>
           <div class="form-group">
             <label for="register-username">
-              <span class="label-icon">👤</span>
+              <i data-lucide="user" class="label-icon"></i>
               Username
             </label>
             <input type="text" id="register-username" placeholder="Choose a username" required minlength="3" />
           </div>
           <div class="form-group">
             <label for="register-currency">
-              <span class="label-icon">💰</span>
+              <i data-lucide="dollar-sign" class="label-icon"></i>
               Preferred Currency
             </label>
             <select id="register-currency" required>
@@ -120,25 +121,25 @@
           </div>
           <div class="form-group password-toggle">
             <label for="register-password">
-              <span class="label-icon">🔒</span>
+              <i data-lucide="lock" class="label-icon"></i>
               Password
             </label>
             <input type="password" id="register-password" placeholder="Create a strong password" required
               pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.</\>\/?]).{8,}$"
               title="Password must be at least 8 characters with uppercase, lowercase, number and special character">
-            <button type="button" class="toggle-btn">👁️</button>
+            <button type="button" class="toggle-btn"><i data-lucide="eye"></i></button>
           </div>
           <div class="form-group password-toggle">
             <label for="register-confirm">
-              <span class="label-icon">🔐</span>
+              <i data-lucide="shield-check" class="label-icon"></i>
               Confirm Password
             </label>
             <input type="password" id="register-confirm" placeholder="Confirm your password" required />
-            <button type="button" class="toggle-btn">👁️</button>
+            <button type="button" class="toggle-btn"><i data-lucide="eye"></i></button>
           </div>
           <button type="submit" class="btn btn-primary">
             <span class="btn-text">Create Account</span>
-            <span class="btn-icon">→</span>
+            <i data-lucide="arrow-right" class="btn-icon"></i>
           </button>
         </form>
       </div>
@@ -147,19 +148,19 @@
         <h3>Why Choose Spendlify?</h3>
         <div class="feature-grid">
           <div class="feature">
-            <span class="feature-icon">📊</span>
+            <i data-lucide="bar-chart-3" class="feature-icon"></i>
             <span>Smart Tracking</span>
           </div>
           <div class="feature">
-            <span class="feature-icon">🤖</span>
+            <i data-lucide="brain" class="feature-icon"></i>
             <span>AI Insights</span>
           </div>
           <div class="feature">
-            <span class="feature-icon">💱</span>
+            <i data-lucide="coins" class="feature-icon"></i>
             <span>Multi-Currency</span>
           </div>
           <div class="feature">
-            <span class="feature-icon">🔐</span>
+            <i data-lucide="shield-check" class="feature-icon"></i>
             <span>Secure & Private</span>
           </div>
         </div>
@@ -168,6 +169,10 @@
   </div>
 
   <script src="/static/js/login.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
 </body>
 
 </html>

@@ -1,32 +1,52 @@
 <div id="dashboard" class="section active">
     <div class="stats-grid">
         <div class="stat-card income">
-            <div class="stat-icon">💰</div>
+            <i data-lucide="trending-up" class="stat-icon"></i>
             <div class="stat-label">Total Income</div>
             <div class="stat-value" id="total-income">$0.00</div>
         </div>
         <div class="stat-card expense">
-            <div class="stat-icon">💸</div>
+            <i data-lucide="trending-down" class="stat-icon"></i>
             <div class="stat-label">Total Expenses</div>
             <div class="stat-value" id="total-expense">$0.00</div>
         </div>
         <div class="stat-card net">
-            <div class="stat-icon">📈</div>
+            <i data-lucide="wallet" class="stat-icon"></i>
             <div class="stat-label">Net Balance</div>
             <div class="stat-value" id="net-balance">$0.00</div>
         </div>
     </div>
 
+    <!-- Charts Row -->
+    <div class="charts-grid">
+        <div class="card chart-card">
+            <div class="card-header">
+                <h3><i data-lucide="pie-chart" style="display: inline; width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>Spending by Category</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+        <div class="card chart-card">
+            <div class="card-header">
+                <h3><i data-lucide="trending-up" style="display: inline; width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>Monthly Trend</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header">
-            <h3>Top Spending Categories</h3>
+            <h3><i data-lucide="tag" style="display: inline; width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>Top Spending Categories</h3>
         </div>
         <div id="top-categories"></div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <h3>Recent Transactions</h3>
+            <h3><i data-lucide="clock" style="display: inline; width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>Recent Transactions</h3>
         </div>
         <div id="recent-transactions"></div>
     </div>

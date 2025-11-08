@@ -1,3 +1,7 @@
+// Chart instances
+let categoryChart = null;
+let trendChart = null;
+
 // Dashboard Data
 async function loadDashboardData() {
     try {
@@ -67,12 +71,196 @@ async function loadDashboardData() {
 
         document.getElementById('recent-transactions').innerHTML = recentHtml;
 
+        // Render charts
+        renderCategoryChart(data.top_categories, allTx);
+        renderTrendChart(allTx);
+
         // Load dashboard reminders
         await loadDashboardReminders();
 
     } catch (error) {
         console.error('Error loading dashboard data:', error);
     }
+}
+
+// Render Category Pie Chart
+function renderCategoryChart(categories, transactions) {
+    const ctx = document.getElementById('categoryChart');
+    if (!ctx) return;
+
+    // Destroy existing chart
+    if (categoryChart) {
+        categoryChart.destroy();
+    }
+
+    // Get expense transactions only
+    const expenses = transactions.filter(tx => tx.type === 'expense');
+    
+    // Group by category
+    const categoryData = {};
+    expenses.forEach(tx => {
+        const cat = tx.category || 'Other';
+        categoryData[cat] = (categoryData[cat] || 0) + parseFloat(tx.amount);
+    });
+
+    const labels = Object.keys(categoryData);
+    const data = Object.values(categoryData);
+
+    if (labels.length === 0) {
+        ctx.parentElement.innerHTML = '<div class="empty-state" style="padding: 40px;"><p>No expense data to visualize</p></div>';
+        return;
+    }
+
+    // Modern color palette
+    const colors = [
+        '#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6',
+        '#ec4899', '#14b8a6', '#f97316', '#06b6d4', '#84cc16'
+    ];
+
+    categoryChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors.slice(0, labels.length),
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            family: 'Inter'
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Render Monthly Trend Line Chart
+function renderTrendChart(transactions) {
+    const ctx = document.getElementById('trendChart');
+    if (!ctx) return;
+
+    // Destroy existing chart
+    if (trendChart) {
+        trendChart.destroy();
+    }
+
+    if (transactions.length === 0) {
+        ctx.parentElement.innerHTML = '<div class="empty-state" style="padding: 40px;"><p>No transaction data to visualize</p></div>';
+        return;
+    }
+
+    // Group transactions by month
+    const monthlyData = {};
+    transactions.forEach(tx => {
+        const date = new Date(tx.date);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        
+        if (!monthlyData[monthKey]) {
+            monthlyData[monthKey] = { income: 0, expense: 0 };
+        }
+        
+        const amount = parseFloat(tx.amount);
+        if (tx.type === 'income') {
+            monthlyData[monthKey].income += amount;
+        } else {
+            monthlyData[monthKey].expense += amount;
+        }
+    });
+
+    // Sort by month and get last 6 months
+    const sortedMonths = Object.keys(monthlyData).sort().slice(-6);
+    const labels = sortedMonths.map(m => {
+        const [year, month] = m.split('-');
+        const date = new Date(year, month - 1);
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    });
+
+    const incomeData = sortedMonths.map(m => monthlyData[m].income);
+    const expenseData = sortedMonths.map(m => monthlyData[m].expense);
+
+    trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Income',
+                    data: incomeData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Expenses',
+                    data: expenseData,
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            family: 'Inter'
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: $${context.parsed.y.toFixed(2)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toFixed(0);
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Dashboard Reminders

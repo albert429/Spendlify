@@ -157,12 +157,18 @@ body::before {
 }
 
 .nav-link .icon {
-    font-size: 1.25rem;
+    width: 20px;
+    height: 20px;
     transition: transform var(--transition-base);
 }
 
 .nav-link:hover .icon {
     transform: scale(1.1);
+}
+
+.menu-toggle i {
+    width: 24px;
+    height: 24px;
 }
 
 /* Main Content Styles */
